@@ -8,7 +8,7 @@ Offsets are outdated! I would update them If I had any free time!
 Bugs might be included so yeah, I would fix them. If i find any!
 
 # Credits
-Thanks to the following individuals without them we can't do the project!
+Thanks to the following individuals without them The project might have been impossible!
 
 * LGL Mod Menu project it got deleted
 * Gamer Black (@GamerBlackZone) in Telegram channel for his Aadil Among Us Copy, and his Watermark.
