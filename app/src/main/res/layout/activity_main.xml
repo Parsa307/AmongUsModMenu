@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="12dp"
-            android:text="@string/modded_by_parsast"
+            android:text="@string/developed_by_parsast"
             android:textSize="17sp"
             android:typeface="serif"
             android:textStyle="bold"
