@@ -3,6 +3,8 @@
 
 Floating mod menu for Among Us Mod Menu, requires Android Studio Doesn't compile with AIDE!
 
+Offsets are outdated! I would update them If I had any free time!
+
 Bugs might be included so yeah, I would fix them. If i find any!
 
 # Credits
