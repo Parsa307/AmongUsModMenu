@@ -1119,20 +1119,21 @@ public class Menu {
             btndialog.setPadding(15,10,15,10);
             btndialog.setText("SET VALUE");
             btndialog.setOnClickListener(view1 -> {
-int num1;
-try {
-num1 = Integer.parseInt(TextUtils.isEmpty(edittext.getText().toString()) ? "0" : edittext.getText().toString());
-if (maxValue != 0 &&  num1 >= maxValue) {
-    num1 = maxValue;
-}
-} catch (NumberFormatException ex) {
-num1 = 2147483640;
-}
-edittextnum.setNum(num1);
-textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num1 + "</font>"));
-alert.dismiss();
-Preferences.changeFeatureInt(getContext, featName, featNum, num1);
-edittext.setFocusable(false);
+    int num1;
+    try {
+        num1 = Integer.parseInt(TextUtils.isEmpty(edittext.getText().toString()) ? "0" : edittext.getText().toString());
+        if (maxValue != 0 &&  num1 >= maxValue) {
+            num1 = maxValue;
+        }
+    } catch (NumberFormatException ex) {
+        num1 = 2147483640;
+    }
+
+    edittextnum.setNum(num1);
+    textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num1 + "</font>"));
+    alert.dismiss();
+    Preferences.changeFeatureInt(getContext, featName, featNum, num1);
+    edittext.setFocusable(false);
 });
             linearLayout1.addView(titleText);
             linearLayout1.addView(TextViewNote);
@@ -1430,14 +1431,10 @@ edittext.setFocusable(false);
     }
 
     private static class EditTextNum {
-        private int val;
+        int val;
 
         public void setNum(int i) {
             val = i;
-        }
-
-        public int getNum() {
-            return val;
         }
     }
 
