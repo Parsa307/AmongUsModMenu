@@ -1,7 +1,7 @@
 # Introduction
 ![GitHub](https://img.shields.io/github/license/Parsa307/AmongUsModMenu?style=flat-square)
 
-![Preview of Among Us Mod Menu](AmongUsModMenu.png)
+![Preview of Among Us Mod Menu](AmongUsModMenu.jpg)
 
 Floating mod menu for Among Us Mod Menu, requires Android Studio Doesn't compile with AIDE!
 
