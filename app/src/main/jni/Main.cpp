@@ -672,7 +672,7 @@ int RegisterMenu(JNIEnv *env) {
             {OBFUSCATE("Background"), OBFUSCATE("()Ljava/lang/String;"), reinterpret_cast<void *>(Background)},
             {OBFUSCATE("IconWebViewData"),  OBFUSCATE("()Ljava/lang/String;"), reinterpret_cast<void *>(IconWebViewData)},
             {OBFUSCATE("IsGameLibLoaded"),  OBFUSCATE("()Z"), reinterpret_cast<void *>(isGameLibLoaded)},
-            {OBFUSCATE("Init"),OBFUSCATE("(Landroid/content/Context;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;)V"),reinterpret_cast<void *>(Init)},
+            {OBFUSCATE("Init"),OBFUSCATE("(Landroid/content/Context;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;)V"),reinterpret_cast<void *>(Init)},
             {OBFUSCATE("SettingsList"),  OBFUSCATE("()[Ljava/lang/String;"), reinterpret_cast<void *>(SettingsList)},
             {OBFUSCATE("GetFeatureList"),  OBFUSCATE("()[Ljava/lang/String;"), reinterpret_cast<void *>(GetFeatureList)},
             {OBFUSCATE("GetFeatureList2"),  OBFUSCATE("()[Ljava/lang/String;"), reinterpret_cast<void *>(GetFeatureList2)},

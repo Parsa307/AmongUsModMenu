@@ -113,7 +113,7 @@ public class Menu {
     TextView FloatingText;
 
     //initialize methods from the native library
-    native void Init(Context context, TextView title, TextView subTitle, TextView FloatingText);
+    native void Init(Context context, TextView title, TextView subTitle, TextView t1, TextView t2, TextView t3, TextView t4, TextView FloatingText);
 
     native String Icon();
 
@@ -320,8 +320,7 @@ public class Menu {
         //****************************** TAB 1 *****************************\\
         t1 = new TextView(context);
 		t1.setLayoutParams(layoutParams);
-        t1.setText("Player\nMods");
-		t1.setGravity(17);
+        t1.setGravity(Gravity.CENTER);
         t1.setTextColor(TAB_TEXT_COLOR);
         t1.setTextSize(TAB_TEXT_SIZE);
 		t1.setPadding(45, 15, 45, 15);
@@ -341,8 +340,7 @@ public class Menu {
         //****************************** TAB 2 *****************************\\
         t2 = new TextView(context);
 		t2.setLayoutParams(layoutParams);
-        t2.setText("Player\nAbilties");
-		t2.setGravity(17);
+        t2.setGravity(Gravity.CENTER);
         t2.setTextColor(TAB_TEXT_COLOR);
         t2.setTextSize(TAB_TEXT_SIZE);
 		t2.setPadding(45, 15, 45, 15);
@@ -362,8 +360,7 @@ public class Menu {
 		//****************************** TAB 3 *****************************\\
         t3 = new TextView(context);
 		t3.setLayoutParams(layoutParams);
-        t3.setText("Account\nMods");
-		t3.setGravity(17);
+        t3.setGravity(Gravity.CENTER);
         t3.setTextColor(TAB_TEXT_COLOR);
         t3.setTextSize(TAB_TEXT_SIZE);
 		t3.setPadding(45, 15, 45, 15);
@@ -383,8 +380,7 @@ public class Menu {
 		//****************************** TAB 4 *****************************\\
         t4 = new TextView(context);
 		t4.setLayoutParams(layoutParams);
-        t4.setText("Social\nMedias");
-		t4.setGravity(17);
+        t4.setGravity(Gravity.CENTER);
         t4.setTextColor(TAB_TEXT_COLOR);
         t4.setTextSize(TAB_TEXT_SIZE);
 		t4.setPadding(45, 15, 45, 15);
@@ -510,7 +506,7 @@ public class Menu {
         relativeLayout.addView(closeBtn);
         mExpanded.addView(relativeLayout);
 
-        Init(context, title, subTitle, FloatingText);
+        Init(context, title, subTitle, t1, t2, t3, t4, FloatingText);
     }
 
     public void ShowMenu() {
@@ -1074,14 +1070,14 @@ public class Menu {
             //TextView
             final TextView titleText = new TextView(getContext);
             titleText.setText(Html.fromHtml("<u>" + featName + "</u>"));
-            titleText.setGravity(17);
+            titleText.setGravity(Gravity.CENTER);
             titleText.setTypeface(Typeface.DEFAULT_BOLD);
             titleText.setTextColor(TEXT_COLOR);
             titleText.setTextSize(22f);
 
             //TextView
             final TextView TextViewNote = new TextView(getContext);
-            TextViewNote.setGravity(17);
+            TextViewNote.setGravity(Gravity.CENTER);
             TextViewNote.setTextSize(14.0F);
             TextViewNote.setText("Click \"Set Value\" button to apply changes || outside to cancel");
             TextViewNote.setPadding(10, 5, 10, 5);
@@ -1223,14 +1219,14 @@ public class Menu {
             //TextView
             final TextView titleText = new TextView(getContext);
             titleText.setText(Html.fromHtml("<u>" + featName + "</u>"));
-            titleText.setGravity(17);
+            titleText.setGravity(Gravity.CENTER);
             titleText.setTypeface(Typeface.DEFAULT_BOLD);
             titleText.setTextColor(TEXT_COLOR);
             titleText.setTextSize(22f);
 
             //TextView
             final TextView TextViewNote = new TextView(getContext);
-            TextViewNote.setGravity(17);
+            TextViewNote.setGravity(Gravity.CENTER);
             TextViewNote.setTextSize(14.0F);
             TextViewNote.setText("Click \"Set Value\" button to apply changes || outside to cancel");
             TextViewNote.setPadding(10, 15, 10, 10);

@@ -52,7 +52,7 @@ void *exit_thread(void *) {
 }
 
 //Needed jclass parameter because this is a static java method
-void CheckOverlayPermission(JNIEnv *env, jclass thiz, jobject ctx){
+void CheckOverlayPermission(JNIEnv *env, jclass, jobject ctx){
     //If overlay permission option is greyed out, make sure to add android.permission.SYSTEM_ALERT_WINDOW in manifest
 
     LOGI(OBFUSCATE("Check overlay permission"));
@@ -79,12 +79,20 @@ void CheckOverlayPermission(JNIEnv *env, jclass thiz, jobject ctx){
     startService(env, ctx);
 }
 
-void Init(JNIEnv *env, jobject thiz, jobject ctx, jobject title, jobject subtitle, jobject FloatingText){
+void Init(JNIEnv *env, jobject, jobject ctx, jobject title, jobject subtitle, jobject t1, jobject t2, jobject t3, jobject t4, jobject FloatingText){
     //Set sub title
     setText(env, title, OBFUSCATE("<b>Developed by Parsast</b>"));
 
     //Set sub title
     setText(env, subtitle, OBFUSCATE("<b>Among Us</b>"));
+
+    setText(env, t1, OBFUSCATE("Player<br>Mods"));
+
+    setText(env, t2, OBFUSCATE("Player<br>Abilties"));
+
+    setText(env, t3, OBFUSCATE("Account<br>Mods"));
+
+    setText(env, t4, OBFUSCATE("Social<br>Medias"));
 
     setText(env, FloatingText, OBFUSCATE("<b>Developed by Parsast</b>"));
 
