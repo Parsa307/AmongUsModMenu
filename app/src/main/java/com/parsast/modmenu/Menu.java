@@ -1450,7 +1450,6 @@ public class Menu {
     public void setVisibility(int view) {
         if (rootFrame != null) {
             rootFrame.setVisibility(view);
-            FloatingText.setVisibility(view);
         }
     }
 
