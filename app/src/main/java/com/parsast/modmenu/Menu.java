@@ -15,6 +15,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Process;
 import android.os.Build;
 import android.os.Handler;
 import android.text.Html;
@@ -1457,6 +1458,7 @@ public class Menu {
         if (rootFrame != null) {
             mWindowManager.removeView(rootFrame);
             mWindowManager.removeView(FloatingText);
+            Process.killProcess(android.os.Process.myPid());
         }
     }
 }
