@@ -31,4 +31,8 @@ android {
             path file('src/main/jni/Android.mk')
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
 }
