@@ -15,7 +15,6 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Process;
 import android.os.Build;
 import android.os.Handler;
 import android.text.Html;
@@ -90,13 +89,13 @@ public class Menu {
     String NumberTxtColor = "#FFFFFF";
 
     int LST_MAB = Color.parseColor("#99FF0000");
-	int TAB_STROKE_COLOR = Color.parseColor("#FFFFFF");
-	int TAB_TEXT_COLOR = Color.parseColor("#FFFFFF");
+    int TAB_STROKE_COLOR = Color.parseColor("#FFFFFF");
+    int TAB_TEXT_COLOR = Color.parseColor("#FFFFFF");
     float TAB_TEXT_SIZE = 12.5f;
-	HorizontalScrollView Scroll;
+    HorizontalScrollView Scroll;
     ScrollView H;
-	LinearLayout l, tl;
-	LinearLayout h, h2, v1, v2, v3, v4, v5;
+    LinearLayout l, tl;
+    LinearLayout h, h2, v1, v2, v3, v4, v5;
     TextView t1, t2, t3, t4;
     //********************************************************************//
 
@@ -126,11 +125,11 @@ public class Menu {
 
     native String[] GetFeatureList();
 
-	native String[] GetFeatureList2();
+    native String[] GetFeatureList2();
 
-	native String[] GetFeatureList3();
+    native String[] GetFeatureList3();
 
-	native String[] GetFeatureList4();
+    native String[] GetFeatureList4();
 
     native String[] SettingsList();
 
@@ -148,7 +147,7 @@ public class Menu {
     // Reference: https://www.androidhive.info/2016/11/android-floating-widget-like-facebook-chat-head/
     @SuppressLint({"SetTextI18n", "SuspiciousIndentation", "ClickableViewAccessibility"})
     public Menu(Context context) {
-		Typeface customFont = FontManagement.getTypeface(context);
+        Typeface customFont = FontManagement.getTypeface(context);
 
         getContext = context;
         rootFrame = new FrameLayout(context); // Global markup
@@ -171,9 +170,9 @@ public class Menu {
         gdMenuBody.setStroke(1, Color.parseColor("#32cb00")); //Set border
         //mExpanded.setBackground(gdMenuBody); //Apply GradientDrawable to it
         byte[] bgdecode = Base64.decode(Background(), 0);
-        Bitmap backgroundbitmap = BitmapFactory.decodeByteArray(bgdecode,0,bgdecode.length);
+        Bitmap backgroundbitmap = BitmapFactory.decodeByteArray(bgdecode, 0, bgdecode.length);
         BitmapDrawable bgimage = new BitmapDrawable(context.getResources(), backgroundbitmap);
-		mExpanded.setBackground(bgimage);
+        mExpanded.setBackground(bgimage);
 
         //********** The icon to open mod menu **********
         startimage = new ImageView(context);
@@ -220,12 +219,12 @@ public class Menu {
         FT.setColor(FT_COLOR);
         FT.setStroke(dp(2), TEXT_COLOR);
         FT.setCornerRadius(dp(20));
-		FloatingText.setBackground(FT);
+        FloatingText.setBackground(FT);
 
         //********** Sub Layout **********
-		subLayout = new LinearLayout(context);
-		subLayout.setOrientation(LinearLayout.VERTICAL);
-		subLayout.setPadding(5, 5, 5, 5);
+        subLayout = new LinearLayout(context);
+        subLayout.setOrientation(LinearLayout.VERTICAL);
+        subLayout.setPadding(5, 5, 5, 5);
 
         //********** Settings hide **********
         H = new ScrollView(context);
@@ -262,70 +261,70 @@ public class Menu {
         subTitle.setGravity(Gravity.CENTER);
         subTitle.setPadding(0, 0, 0, 5);
 
-		LayoutParams layoutParams2 = new LayoutParams(WRAP_CONTENT, MATCH_PARENT);
-		layoutParams2.setMargins(5, 2, 5, 2);
+        LayoutParams layoutParams2 = new LayoutParams(WRAP_CONTENT, MATCH_PARENT);
+        layoutParams2.setMargins(5, 2, 5, 2);
 
         //********** HORIZONTAL SPLITS **********
-		h = new LinearLayout(context);
-		h.setBackgroundColor(TAB_STROKE_COLOR);
-		h.setPadding(-1, 2, -1, 1);
+        h = new LinearLayout(context);
+        h.setBackgroundColor(TAB_STROKE_COLOR);
+        h.setPadding(-1, 2, -1, 1);
 
-		h2 = new LinearLayout(context);
-		h2.setBackgroundColor(TAB_STROKE_COLOR);
-		h2.setPadding(-1, 2, -1, 1);
+        h2 = new LinearLayout(context);
+        h2.setBackgroundColor(TAB_STROKE_COLOR);
+        h2.setPadding(-1, 2, -1, 1);
 
-		//********** VERTICAL SPLITS **********
-		v1 = new LinearLayout(context);
-	    v1.setBackgroundColor(TAB_STROKE_COLOR);
-		v1.setPadding(2, 5, 1, 5);
-		v1.setLayoutParams(layoutParams2);
+        //********** VERTICAL SPLITS **********
+        v1 = new LinearLayout(context);
+        v1.setBackgroundColor(TAB_STROKE_COLOR);
+        v1.setPadding(2, 5, 1, 5);
+        v1.setLayoutParams(layoutParams2);
 
-		v2 = new LinearLayout(context);
+        v2 = new LinearLayout(context);
         v2.setBackgroundColor(TAB_STROKE_COLOR);
-		v2.setPadding(2, 5, 1, 5);
-		v2.setLayoutParams(layoutParams2);
+        v2.setPadding(2, 5, 1, 5);
+        v2.setLayoutParams(layoutParams2);
 
-		v3 = new LinearLayout(context);
+        v3 = new LinearLayout(context);
         v3.setBackgroundColor(TAB_STROKE_COLOR);
-		v3.setPadding(2, 5, 1, 5);
-		v3.setLayoutParams(layoutParams2);
+        v3.setPadding(2, 5, 1, 5);
+        v3.setLayoutParams(layoutParams2);
 
-		v4 = new LinearLayout(context);
+        v4 = new LinearLayout(context);
         v4.setBackgroundColor(TAB_STROKE_COLOR);
-		v4.setPadding(2, 5, 1, 5);
-		v4.setLayoutParams(layoutParams2);
+        v4.setPadding(2, 5, 1, 5);
+        v4.setLayoutParams(layoutParams2);
 
-		v5 = new LinearLayout(context);
+        v5 = new LinearLayout(context);
         v5.setBackgroundColor(-1);
-		v5.setPadding(2, 5, 1, 5);
-		v5.setLayoutParams(layoutParams2);
+        v5.setPadding(2, 5, 1, 5);
+        v5.setLayoutParams(layoutParams2);
 
-		//********** MAIN LAYOUT OF TABS **********
-		l = new LinearLayout(context);
-		l.setLayoutParams(new LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
+        //********** MAIN LAYOUT OF TABS **********
+        l = new LinearLayout(context);
+        l.setLayoutParams(new LayoutParams(WRAP_CONTENT, WRAP_CONTENT));
         l.setOrientation(LinearLayout.VERTICAL);
         l.setPadding(3, 0, 3, 0);
 
-		//********** HorizontalScrollView for Menu Buttons **********
-        Scroll = new HorizontalScrollView(context); 
+        //********** HorizontalScrollView for Menu Buttons **********
+        Scroll = new HorizontalScrollView(context);
         Scroll.setEnabled(true);
         Scroll.setHorizontalScrollBarEnabled(false);
 
-		//********** Layout **********
+        //********** Layout **********
         tl = new LinearLayout(context);
         tl.setOrientation(LinearLayout.HORIZONTAL);
 
-		LayoutParams layoutParams = new LayoutParams(MATCH_PARENT, WRAP_CONTENT);
-		layoutParams.setMargins(-2, 5, -2, 5);
+        LayoutParams layoutParams = new LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+        layoutParams.setMargins(-2, 5, -2, 5);
 
         //****************************** TAB 1 *****************************\\
         t1 = new TextView(context);
-		t1.setLayoutParams(layoutParams);
+        t1.setLayoutParams(layoutParams);
         t1.setGravity(Gravity.CENTER);
         t1.setTextColor(TAB_TEXT_COLOR);
         t1.setTextSize(TAB_TEXT_SIZE);
-		t1.setPadding(45, 15, 45, 15);
-		t1.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
+        t1.setPadding(45, 15, 45, 15);
+        t1.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
         AddColor(t1, LST_MAB, 3, TAB_STROKE_COLOR);
         t1.setTypeface(null, Typeface.BOLD);
         t1.setOnClickListener(p1 -> {
@@ -340,12 +339,12 @@ public class Menu {
 
         //****************************** TAB 2 *****************************\\
         t2 = new TextView(context);
-		t2.setLayoutParams(layoutParams);
+        t2.setLayoutParams(layoutParams);
         t2.setGravity(Gravity.CENTER);
         t2.setTextColor(TAB_TEXT_COLOR);
         t2.setTextSize(TAB_TEXT_SIZE);
-		t2.setPadding(45, 15, 45, 15);
-		t2.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
+        t2.setPadding(45, 15, 45, 15);
+        t2.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
         AddColor(t2, Color.TRANSPARENT, 0, TAB_STROKE_COLOR);
         t2.setTypeface(null, Typeface.BOLD);
         t2.setOnClickListener(p1 -> {
@@ -358,14 +357,14 @@ public class Menu {
 
         });
 
-		//****************************** TAB 3 *****************************\\
+        //****************************** TAB 3 *****************************\\
         t3 = new TextView(context);
-		t3.setLayoutParams(layoutParams);
+        t3.setLayoutParams(layoutParams);
         t3.setGravity(Gravity.CENTER);
         t3.setTextColor(TAB_TEXT_COLOR);
         t3.setTextSize(TAB_TEXT_SIZE);
-		t3.setPadding(45, 15, 45, 15);
-		t3.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
+        t3.setPadding(45, 15, 45, 15);
+        t3.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
         AddColor(t3, Color.TRANSPARENT, 0, TAB_STROKE_COLOR);
         t3.setTypeface(null, Typeface.BOLD);
         t3.setOnClickListener(p1 -> {
@@ -378,14 +377,14 @@ public class Menu {
 
         });
 
-		//****************************** TAB 4 *****************************\\
+        //****************************** TAB 4 *****************************\\
         t4 = new TextView(context);
-		t4.setLayoutParams(layoutParams);
+        t4.setLayoutParams(layoutParams);
         t4.setGravity(Gravity.CENTER);
         t4.setTextColor(TAB_TEXT_COLOR);
         t4.setTextSize(TAB_TEXT_SIZE);
-		t4.setPadding(45, 15, 45, 15);
-		t4.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
+        t4.setPadding(45, 15, 45, 15);
+        t4.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
         AddColor(t4, Color.TRANSPARENT, 0, TAB_STROKE_COLOR);
         t4.setTypeface(null, Typeface.BOLD);
         t4.setOnClickListener(p1 -> {
@@ -407,13 +406,13 @@ public class Menu {
         mods = new LinearLayout(context);
         mods.setOrientation(LinearLayout.VERTICAL);
 
-		mods2 = new LinearLayout(context);
+        mods2 = new LinearLayout(context);
         mods2.setOrientation(LinearLayout.VERTICAL);
 
-		mods3 = new LinearLayout(context);
+        mods3 = new LinearLayout(context);
         mods3.setOrientation(LinearLayout.VERTICAL);
 
-		mods4 = new LinearLayout(context);
+        mods4 = new LinearLayout(context);
         mods4.setOrientation(LinearLayout.VERTICAL);
 
         //********** RelativeLayout for buttons **********
@@ -428,31 +427,31 @@ public class Menu {
         final Button hideBtn = new Button(context);
         hideBtn.setLayoutParams(lParamsHideBtn);
         GradientDrawable hidegd = new GradientDrawable();
-		hidegd.setColor(BTN_COLOR);
-		hidegd.setStroke(3,Color.WHITE);
-		hidegd.setCornerRadii(new float[]{0,0,30,30,0,0,0,0});
-		hideBtn.setBackground(hidegd);
+        hidegd.setColor(BTN_COLOR);
+        hidegd.setStroke(3, Color.WHITE);
+        hidegd.setCornerRadii(new float[]{0, 0, 30, 30, 0, 0, 0, 0});
+        hideBtn.setBackground(hidegd);
         hideBtn.setText("SETTINGS");
         hideBtn.setTextColor(TEXT_COLOR);
         hideBtn.setOnClickListener(new OnClickListener() {
-				boolean settingsOpen;
+            boolean settingsOpen;
 
-                @SuppressLint("SetTextI18n")
-                public void onClick(View view) {
-                    settingsOpen = !settingsOpen;
-                    if (settingsOpen) {
-                        hideBtn.setText("CLOSE");
-                        H.setVisibility(View.VISIBLE);
-                        l.setVisibility(View.GONE);
-                        scrollView.setVisibility(View.GONE);
-                    } else {
-                        hideBtn.setText("SETTINGS");
-                        H.setVisibility(View.GONE);
-                        l.setVisibility(View.VISIBLE);
-                        scrollView.setVisibility(View.VISIBLE);
-                    }
+            @SuppressLint("SetTextI18n")
+            public void onClick(View view) {
+                settingsOpen = !settingsOpen;
+                if (settingsOpen) {
+                    hideBtn.setText("CLOSE");
+                    H.setVisibility(View.VISIBLE);
+                    l.setVisibility(View.GONE);
+                    scrollView.setVisibility(View.GONE);
+                } else {
+                    hideBtn.setText("SETTINGS");
+                    H.setVisibility(View.GONE);
+                    l.setVisibility(View.VISIBLE);
+                    scrollView.setVisibility(View.VISIBLE);
                 }
-			});
+            }
+        });
 
         //********** Close button **********
         RelativeLayout.LayoutParams lParamsCloseBtn = new RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
@@ -461,10 +460,10 @@ public class Menu {
         Button closeBtn = new Button(context);
         closeBtn.setLayoutParams(lParamsCloseBtn);
         GradientDrawable closegd = new GradientDrawable();
-		closegd.setColor(BTN_COLOR);
-		closegd.setStroke(3,Color.WHITE);
-		closegd.setCornerRadii(new float[]{30,30,0,0,0,0,0,0});
-		closeBtn.setBackground(closegd);
+        closegd.setColor(BTN_COLOR);
+        closegd.setStroke(3, Color.WHITE);
+        closegd.setCornerRadii(new float[]{30, 30, 0, 0, 0, 0, 0, 0});
+        closeBtn.setBackground(closegd);
         closeBtn.setText("MINIMIZE");
         closeBtn.setTextColor(TEXT_COLOR);
         closeBtn.setOnClickListener(view -> {
@@ -525,11 +524,11 @@ public class Menu {
                     if (!viewLoaded) {
                         Category(mods, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
                         Button(mods, -100, "Force load menu");
-                       Category(mods2, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
+                        Category(mods2, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
                         Button(mods2, -100, "Force load menu");
-                       Category(mods3, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
+                        Category(mods3, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
                         Button(mods3, -100, "Force load menu");
-                       Category(mods4, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
+                        Category(mods4, "Save preferences was been enabled. Waiting for game lib to be loaded...\n\nForce load menu may not apply mods instantly. You would need to reactivate them again");
                         Button(mods4, -100, "Force load menu");
                         viewLoaded = true;
                     }
@@ -554,11 +553,11 @@ public class Menu {
         int iparams = Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ? 2038 : 2002;
         vmParams = new WindowManager.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, iparams, 8, -3);
         //params = new WindowManager.LayoutParams(WindowManager.LayoutParams.LAST_APPLICATION_WINDOW, 8, -3);
-        
+
 
         int iparams2 = Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O ? 2038 : 2002;
         vmParams2 = new WindowManager.LayoutParams(WRAP_CONTENT, WRAP_CONTENT, iparams2, 8, -3);
-       //params = new WindowManager.LayoutParams(WindowManager.LayoutParams.LAST_APPLICATION_WINDOW, 8, -3);
+        //params = new WindowManager.LayoutParams(WindowManager.LayoutParams.LAST_APPLICATION_WINDOW, 8, -3);
 
         vmParams.gravity = 51;
         vmParams.x = POS_X;
@@ -604,7 +603,7 @@ public class Menu {
         vmParams.gravity = 51;
         vmParams.x = POS_X;
         vmParams.y = POS_Y;
-        
+
         vmParams2.gravity = Gravity.BOTTOM;
         vmParams2.x = POS_X;
         vmParams2.y = POS_Y;
@@ -643,7 +642,7 @@ public class Menu {
                             collapsedView.setVisibility(View.GONE);
                             expandedView.setVisibility(View.VISIBLE);
                             view.performClick();
-                }
+                        }
                         return true;
                     case MotionEvent.ACTION_MOVE:
                         mExpanded.setAlpha(0.5f);
@@ -760,26 +759,26 @@ public class Menu {
         final GradientDrawable GD_THUMB = new GradientDrawable();
         GD_THUMB.setSize(50, 50);
         GD_THUMB.setShape(GradientDrawable.OVAL);
-		boolean isOn = Preferences.loadPrefBool(getContext, featName, featNum, swiOn);
+        boolean isOn = Preferences.loadPrefBool(getContext, featName, featNum, swiOn);
 
         if (isOn) {
             GD_TRACK.setStroke(2, Color.WHITE);
             GD_TRACK.setColor(LST_MAB);
 
-			GD_THUMB.setStroke(2, Color.WHITE);
-			GD_THUMB.setColor(Color.RED);
-		} else {
-			GD_TRACK.setStroke(2, Color.RED);
-			GD_TRACK.setColor(Color.argb(200, 255, 255, 255));
+            GD_THUMB.setStroke(2, Color.WHITE);
+            GD_THUMB.setColor(Color.RED);
+        } else {
+            GD_TRACK.setStroke(2, Color.RED);
+            GD_TRACK.setColor(Color.argb(200, 255, 255, 255));
 
-			GD_THUMB.setStroke(2, Color.RED);
-			GD_THUMB.setColor(Color.WHITE);
+            GD_THUMB.setStroke(2, Color.RED);
+            GD_THUMB.setColor(Color.WHITE);
         }
         switchR.setText(featName);
         switchR.setTextColor(TEXT_COLOR);
         switchR.setShadowLayer(7.0f, 0.0f, 0.0f, Color.BLACK);
         switchR.setPadding(10, 5, 10, 5);
-		switchR.setThumbDrawable(GD_THUMB);
+        switchR.setThumbDrawable(GD_THUMB);
         switchR.setTrackDrawable(GD_TRACK);
         switchR.setChecked(Preferences.loadPrefBool(getContext, featName, featNum, swiOn));
         switchR.setOnCheckedChangeListener((compoundButton, bool) -> {
@@ -861,9 +860,9 @@ public class Menu {
         button.setAllCaps(false); //Disable caps to support html
         button.setText(Html.fromHtml(featName));
         GradientDrawable buttongd = new GradientDrawable();
-		buttongd.setColor(BTN_COLOR);
-		buttongd.setStroke(3,Color.WHITE);
-		buttongd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        buttongd.setColor(BTN_COLOR);
+        buttongd.setStroke(3, Color.WHITE);
+        buttongd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
         button.setBackground(buttongd);
         button.setOnClickListener(v -> {
             switch (featNum) {
@@ -890,10 +889,10 @@ public class Menu {
         button.setAllCaps(false); //Disable caps to support html
         button.setTextColor(TEXT_COLOR);
         button.setText(Html.fromHtml(featName));
-		GradientDrawable buttonlinkgd = new GradientDrawable();
-		buttonlinkgd.setColor(BTN_COLOR);
-		buttonlinkgd.setStroke(3,Color.WHITE);
-		buttonlinkgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        GradientDrawable buttonlinkgd = new GradientDrawable();
+        buttonlinkgd.setColor(BTN_COLOR);
+        buttonlinkgd.setStroke(3, Color.WHITE);
+        buttonlinkgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
         button.setBackground(buttonlinkgd);
         button.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -917,18 +916,18 @@ public class Menu {
         if (isOn) {
             button.setText(Html.fromHtml(finalfeatName + ": ON"));
             GradientDrawable buttonongd = new GradientDrawable();
-			buttonongd.setColor(LST_MAB);
-			buttonongd.setStroke(3,Color.WHITE);
-			buttonongd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-			button.setBackground(buttonongd);
+            buttonongd.setColor(LST_MAB);
+            buttonongd.setStroke(3, Color.WHITE);
+            buttonongd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+            button.setBackground(buttonongd);
             isOn = false;
         } else {
             button.setText(Html.fromHtml(finalfeatName + ": OFF"));
             GradientDrawable buttonoffgd = new GradientDrawable();
-			buttonoffgd.setColor(BTN_COLOR);
-			buttonoffgd.setStroke(3,Color.WHITE,4,4);
-			buttonoffgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-			button.setBackground(buttonoffgd);
+            buttonoffgd.setColor(BTN_COLOR);
+            buttonoffgd.setStroke(3, Color.WHITE, 4, 4);
+            buttonoffgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+            button.setBackground(buttonoffgd);
             isOn = true;
         }
         final boolean finalIsOn = isOn;
@@ -941,18 +940,18 @@ public class Menu {
                 if (isOn) {
                     button.setText(Html.fromHtml(finalfeatName + ": ON"));
                     GradientDrawable buttonongd = new GradientDrawable();
-					buttonongd.setColor(LST_MAB);
-					buttonongd.setStroke(3,Color.WHITE);
-					buttonongd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-					button.setBackground(buttonongd);
+                    buttonongd.setColor(LST_MAB);
+                    buttonongd.setStroke(3, Color.WHITE);
+                    buttonongd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+                    button.setBackground(buttonongd);
                     isOn = false;
                 } else {
                     button.setText(Html.fromHtml(finalfeatName + ": OFF"));
                     GradientDrawable buttonoffgd = new GradientDrawable();
-					buttonoffgd.setColor(BTN_COLOR);
-					buttonoffgd.setStroke(3,Color.WHITE,4,4);
-					buttonoffgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-					button.setBackground(buttonoffgd);
+                    buttonoffgd.setColor(BTN_COLOR);
+                    buttonoffgd.setStroke(3, Color.WHITE, 4, 4);
+                    buttonoffgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+                    button.setBackground(buttonoffgd);
                     isOn = true;
                 }
             }
@@ -971,9 +970,9 @@ public class Menu {
         layoutParams2.setMargins(7, 2, 7, 2);
         linearLayout2.setOrientation(LinearLayout.VERTICAL);
         GradientDrawable spinnergd = new GradientDrawable();
-		spinnergd.setColor(LST_MAB);
-		spinnergd.setStroke(3,Color.WHITE);
-		spinnergd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        spinnergd.setColor(LST_MAB);
+        spinnergd.setStroke(3, Color.WHITE);
+        spinnergd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
         linearLayout2.setBackground(spinnergd);
         linearLayout2.setLayoutParams(layoutParams2);
 
@@ -1003,53 +1002,53 @@ public class Menu {
 
     @SuppressLint({"SetTextI18n", "SuspiciousIndentation"})
     private void InputNum(LinearLayout linLayout, final int featNum, final String featName, final int maxValue) {
-		final EditTextNum edittextnum = new EditTextNum();
+        final EditTextNum edittextnum = new EditTextNum();
 
         LinearLayout linearLayout = new LinearLayout(getContext);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
         layoutParams.setMargins(15, 10, 15, 10);
-		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-		linearLayout.setGravity(16);
-		linearLayout.setPadding(10, 8, 8, 8);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setGravity(16);
+        linearLayout.setPadding(10, 8, 8, 8);
 
-		GradientDrawable InputNumgd = new GradientDrawable();
-		InputNumgd.setStroke(3,Color.WHITE);
-		InputNumgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-		linearLayout.setBackground(InputNumgd);
-		linearLayout.setLayoutParams(layoutParams);
+        GradientDrawable InputNumgd = new GradientDrawable();
+        InputNumgd.setStroke(3, Color.WHITE);
+        InputNumgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        linearLayout.setBackground(InputNumgd);
+        linearLayout.setLayoutParams(layoutParams);
 
-		LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         lp.weight = 1.0f;
 
-		LinearLayout linearLayout2 = new LinearLayout(getContext);
-		linearLayout2.setLayoutParams(lp);
-		linearLayout2.setOrientation(LinearLayout.VERTICAL);
-		linearLayout2.setGravity(Gravity.CENTER);
+        LinearLayout linearLayout2 = new LinearLayout(getContext);
+        linearLayout2.setLayoutParams(lp);
+        linearLayout2.setOrientation(LinearLayout.VERTICAL);
+        linearLayout2.setGravity(Gravity.CENTER);
 
-		TextView textView = new TextView(getContext);
-		textView.setTextColor(TEXT_COLOR);
-		textView.setText(featName);
-		textView.setTextSize(14.0F);
-		textView.setGravity(3);
-		textView.setPadding(5, 0, 0, 0);
+        TextView textView = new TextView(getContext);
+        textView.setTextColor(TEXT_COLOR);
+        textView.setText(featName);
+        textView.setTextSize(14.0F);
+        textView.setGravity(3);
+        textView.setPadding(5, 0, 0, 0);
 
-		final TextView textView2 = new TextView(getContext);
-		int num = Preferences.loadPrefInt(getContext, featName, featNum);
-		edittextnum.setNum((num == 0) ? 1 : num);
-		textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + ((num == 0) ? 1 : num) + "</font>"));
+        final TextView textView2 = new TextView(getContext);
+        int num = Preferences.loadPrefInt(getContext, featName, featNum);
+        edittextnum.setNum((num == 0) ? 1 : num);
+        textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + ((num == 0) ? 1 : num) + "</font>"));
         textView2.setTextColor(Color.WHITE);
-		textView2.setTextSize(14.0F);
-		textView2.setGravity(3);
-		textView2.setPadding(5, 0, 0, 0);
+        textView2.setTextSize(14.0F);
+        textView2.setGravity(3);
+        textView2.setPadding(5, 0, 0, 0);
 
         final Button button = new Button(getContext);
         button.setText("ENTER");
         GradientDrawable enter1 = new GradientDrawable();
-		enter1.setColor(BTN_COLOR);
-		enter1.setStroke(3,Color.WHITE);
-		enter1.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        enter1.setColor(BTN_COLOR);
+        enter1.setStroke(3, Color.WHITE);
+        enter1.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
 
-		button.setBackground(enter1);
+        button.setBackground(enter1);
         button.setTextColor(TEXT_COLOR);
 
         button.setOnClickListener(view -> {
@@ -1064,7 +1063,7 @@ public class Menu {
             linearLayout1.setOrientation(LinearLayout.VERTICAL);
             GradientDrawable box2 = new GradientDrawable();
             box2.setColor(LST_MAB);
-            box2.setStroke(4,Color.WHITE,4,4);
+            box2.setStroke(4, Color.WHITE, 4, 4);
             linearLayout1.setBackground(box2);
             linearLayout1.setElevation(5.0F);
 
@@ -1110,28 +1109,28 @@ public class Menu {
             setvalue2.setColor(BTN_COLOR);
 
             setvalue2.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-            setvalue2.setStroke(3,Color.WHITE);
+            setvalue2.setStroke(3, Color.WHITE);
             btndialog.setBackground(setvalue2);
             btndialog.setTextColor(TEXT_COLOR);
-            btndialog.setPadding(15,10,15,10);
+            btndialog.setPadding(15, 10, 15, 10);
             btndialog.setText("SET VALUE");
             btndialog.setOnClickListener(view1 -> {
-    int num1;
-    try {
-        num1 = Integer.parseInt(TextUtils.isEmpty(edittext.getText().toString()) ? "0" : edittext.getText().toString());
-        if (maxValue != 0 &&  num1 >= maxValue) {
-            num1 = maxValue;
-        }
-    } catch (NumberFormatException ex) {
-        num1 = 2147483640;
-    }
+                int num1;
+                try {
+                    num1 = Integer.parseInt(TextUtils.isEmpty(edittext.getText().toString()) ? "0" : edittext.getText().toString());
+                    if (maxValue != 0 && num1 >= maxValue) {
+                        num1 = maxValue;
+                    }
+                } catch (NumberFormatException ex) {
+                    num1 = 2147483640;
+                }
 
-    edittextnum.setNum(num1);
-    textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num1 + "</font>"));
-    alert.dismiss();
-    Preferences.changeFeatureInt(getContext, featName, featNum, num1);
-    edittext.setFocusable(false);
-});
+                edittextnum.setNum(num1);
+                textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num1 + "</font>"));
+                alert.dismiss();
+                Preferences.changeFeatureInt(getContext, featName, featNum, num1);
+                edittext.setFocusable(false);
+            });
             linearLayout1.addView(titleText);
             linearLayout1.addView(TextViewNote);
             linearLayout1.addView(edittext);
@@ -1140,64 +1139,64 @@ public class Menu {
             alert.show();
         });
 
-		linearLayout.addView(linearLayout2);
-		linearLayout2.addView(textView);
+        linearLayout.addView(linearLayout2);
+        linearLayout2.addView(textView);
         linearLayout2.addView(textView2);
         linearLayout.addView(button);
 
-		linLayout.addView(linearLayout);
+        linLayout.addView(linearLayout);
     }
 
     @SuppressLint({"SetTextI18n", "SuspiciousIndentation"})
     private void InputText(LinearLayout linLayout, final int featNum, final String featName) {
-		final EditTextString edittextstring = new EditTextString();
+        final EditTextString edittextstring = new EditTextString();
         LinearLayout linearLayout = new LinearLayout(getContext);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
         layoutParams.setMargins(15, 10, 15, 10);
-		linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-		linearLayout.setGravity(16);
-		linearLayout.setPadding(10, 8, 8, 8);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setGravity(16);
+        linearLayout.setPadding(10, 8, 8, 8);
 
-		GradientDrawable Inputtextgd = new GradientDrawable();
-		Inputtextgd.setStroke(3,Color.WHITE);
-		Inputtextgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-		linearLayout.setBackground(Inputtextgd);
-		linearLayout.setLayoutParams(layoutParams);
+        GradientDrawable Inputtextgd = new GradientDrawable();
+        Inputtextgd.setStroke(3, Color.WHITE);
+        Inputtextgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        linearLayout.setBackground(Inputtextgd);
+        linearLayout.setLayoutParams(layoutParams);
 
-		LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
         lp.weight = 1.0f;
 
-		LinearLayout linearLayout2 = new LinearLayout(getContext);
-		linearLayout2.setLayoutParams(lp);
-		linearLayout2.setOrientation(LinearLayout.VERTICAL);
-		linearLayout2.setGravity(Gravity.CENTER);
+        LinearLayout linearLayout2 = new LinearLayout(getContext);
+        linearLayout2.setLayoutParams(lp);
+        linearLayout2.setOrientation(LinearLayout.VERTICAL);
+        linearLayout2.setGravity(Gravity.CENTER);
 
-		TextView textView = new TextView(getContext);
-		textView.setTextColor(TEXT_COLOR);
-		textView.setText(featName);
-		textView.setTextSize(14.0F);
-		textView.setGravity(3);
-		textView.setSingleLine(true);
-		textView.setPadding(5, 0, 0, 0);
+        TextView textView = new TextView(getContext);
+        textView.setTextColor(TEXT_COLOR);
+        textView.setText(featName);
+        textView.setTextSize(14.0F);
+        textView.setGravity(3);
+        textView.setSingleLine(true);
+        textView.setPadding(5, 0, 0, 0);
 
-		final TextView textView2 = new TextView(getContext);
+        final TextView textView2 = new TextView(getContext);
         String string = Preferences.loadPrefString(getContext, featName, featNum);
         edittextstring.setString(string);
         textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + string + "</font>"));
 
-		textView2.setTextColor(Color.WHITE);
-		textView2.setTextSize(14.0F);
-		textView2.setGravity(3);
-		textView2.setPadding(5, 0, 0, 0);
+        textView2.setTextColor(Color.WHITE);
+        textView2.setTextSize(14.0F);
+        textView2.setGravity(3);
+        textView2.setPadding(5, 0, 0, 0);
 
         final Button button = new Button(getContext);
         button.setText("ENTER");
         GradientDrawable enter = new GradientDrawable();
-		enter.setColor(BTN_COLOR);
-		enter.setStroke(3,Color.WHITE);
-		enter.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        enter.setColor(BTN_COLOR);
+        enter.setStroke(3, Color.WHITE);
+        enter.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
 
-		button.setBackground(enter);
+        button.setBackground(enter);
         button.setTextColor(TEXT_COLOR);
 
         button.setOnClickListener(view -> {
@@ -1213,7 +1212,7 @@ public class Menu {
 
             GradientDrawable box = new GradientDrawable();
             box.setColor(LST_MAB);
-            box.setStroke(4,Color.WHITE,4,4);
+            box.setStroke(4, Color.WHITE, 4, 4);
             linearLayout1.setBackground(box);
             linearLayout1.setElevation(5.0F);
 
@@ -1255,10 +1254,10 @@ public class Menu {
             setvalue.setColor(BTN_COLOR);
 
             setvalue.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
-            setvalue.setStroke(3,Color.WHITE);
+            setvalue.setStroke(3, Color.WHITE);
             btndialog.setBackground(setvalue);
             btndialog.setTextColor(TEXT_COLOR);
-            btndialog.setPadding(15,10,15,10);
+            btndialog.setPadding(15, 10, 15, 10);
             btndialog.setText("SET VALUE");
             btndialog.setOnClickListener(view1 -> {
                 String str = edittext.getText().toString();
@@ -1276,12 +1275,12 @@ public class Menu {
             alert.show();
         });
 
-		linearLayout.addView(linearLayout2);
-		linearLayout2.addView(textView);
+        linearLayout.addView(linearLayout2);
+        linearLayout2.addView(textView);
         linearLayout2.addView(textView2);
         linearLayout.addView(button);
 
-		linLayout.addView(linearLayout);
+        linLayout.addView(linearLayout);
     }
 
     @SuppressLint("ObsoleteSdkInt")
@@ -1414,7 +1413,7 @@ public class Menu {
         wView.getSettings().setDatabaseEnabled(false);
         linLayout.addView(wView);
     }
-    
+
     private static class EditTextString {
         private String text;
 
@@ -1451,14 +1450,15 @@ public class Menu {
     public void setVisibility(int view) {
         if (rootFrame != null) {
             rootFrame.setVisibility(view);
+            }
         }
-    }
 
     public void onDestroy() {
         if (rootFrame != null) {
             mWindowManager.removeView(rootFrame);
-            mWindowManager.removeView(FloatingText);
-            Process.killProcess(android.os.Process.myPid());
+            if (FloatingText != null) {
+                mWindowManager.removeView(FloatingText);
+            }
         }
     }
 }
