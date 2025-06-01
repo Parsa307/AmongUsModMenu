@@ -757,7 +757,7 @@ public class Menu {
         GD_TRACK.setCornerRadius(100);
 
         final GradientDrawable GD_THUMB = new GradientDrawable();
-        GD_THUMB.setSize(50, 50);
+        GD_THUMB.setSize(60, 60);
         GD_THUMB.setShape(GradientDrawable.OVAL);
         boolean isOn = Preferences.loadPrefBool(getContext, featName, featNum, swiOn);
 
