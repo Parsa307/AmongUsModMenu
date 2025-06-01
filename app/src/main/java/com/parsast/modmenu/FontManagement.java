@@ -31,24 +31,17 @@ public class FontManagement {
                 return Typeface.DEFAULT;
             }
 
-            // Create a temporary file inside cache
-            File tmpFontFile = File.createTempFile("tempfont", ".ttf", context.getCacheDir());
-
-            try (FileOutputStream fos = new FileOutputStream(tmpFontFile)) {
-                fos.write(fontDecode);
+                File tmpFontFile = new File(context.getCacheDir(), "Sail-Regular.ttf");
+            if (!tmpFontFile.exists()) {
+                try (FileOutputStream fos = new FileOutputStream(tmpFontFile)) {
+                    fos.write(fontDecode);
+                }
             }
 
-            // Load Typeface
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 cachedTypeface = new Typeface.Builder(tmpFontFile).build();
             } else {
                 cachedTypeface = Typeface.createFromFile(tmpFontFile);
-            }
-
-            // Immediately delete temp file after loading
-            boolean deleted = tmpFontFile.delete();
-            if (!deleted) {
-                Log.w(TAG, "Temporary font file could not be deleted immediately.");
             }
 
             return cachedTypeface;
