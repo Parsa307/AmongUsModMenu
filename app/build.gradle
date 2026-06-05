@@ -22,6 +22,7 @@ android {
             storePassword localProperties.getProperty("storePassword") ?: ""
             keyAlias localProperties.getProperty("keyAlias") ?: ""
             keyPassword localProperties.getProperty("keyPassword") ?: ""
+            enableV3Signing true
     }
 }
     buildTypes {
