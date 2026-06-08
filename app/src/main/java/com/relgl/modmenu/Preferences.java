@@ -10,29 +10,45 @@ public class Preferences {
 
     private static final String DEFAULT_STRING_VALUE = "";
     private static final int DEFAULT_INT_VALUE = 0; //-1
+    private static final long DEFAULT_LONG_VALUE = 0L; //-1L
 
-    public static native void Changes(Context con, int fNum, String fName, int value, boolean bool, String str);
+    public static native void Changes(Context context, int featNum, String featName, int value , long Lvalue, boolean isOn, String inputText);
 
     public static void changeFeatureInt(Context context, String featureName, int featureNum, int value) {
         Preferences.with(context).writeInt(featureNum, value);
-        Changes(context, featureNum, featureName, value, false, null);
+        Changes(context, featureNum, featureName, value, 0, false, null);
     }
 
-    public static void changeFeatureString(Context context, String featureName, int featureNum, String str) {
-        Preferences.with(context).writeString(featureNum, str);
-        Changes(context, featureNum, featureName, 0, false, str);
+    public static void changeFeatureLong(Context context, String featureName, int featureNum, long Lvalue) {
+        Preferences.with(context).writeLong(String.valueOf(featureNum), Lvalue);
+        Changes(context, featureNum, featureName, 0, Lvalue, false, null);
+    }
+
+    public static void changeFeatureString(Context context, String featureName, int featureNum, String inputString) {
+        Preferences.with(context).writeString(featureNum, inputString);
+        Changes(context, featureNum, featureName, 0, 0, false, inputString);
     }
 
     public static void changeFeatureBool(Context context, String featureName, int featureNum, boolean bool) {
         Preferences.with(context).writeBoolean(featureNum, bool);
-        Changes(context, featureNum, featureName, 0, bool, null);
+        Changes(context, featureNum, featureName, 0, 0, bool, null);
     }
 
     public static int loadPrefInt(Context context, String featureName, int featureNum) {
         if (loadPref) {
             int value = Preferences.with(context).readInt(featureNum);
-            Changes(context, featureNum, featureName, value, false, null);
+            Changes(context, featureNum, featureName, value , 0, false, null);
             return value;
+        }
+        return 0;
+    }
+
+
+    public static long loadPrefLong(Context context, String featureName, int featureNum) {
+        if (loadPref) {
+            long Lvalue = Preferences.with(context).readLong(String.valueOf(featureNum));
+            Changes(context, featureNum, featureName, 0, Lvalue, false, null);
+            return Lvalue;
         }
         return 0;
     }
@@ -46,15 +62,15 @@ public class Preferences {
             bDef = bool;
         }
 
-        Changes(context, featureNum, featureName, 0, bDef, null);
+        Changes(context, featureNum, featureName, 0,0, bDef, null);
         return bDef;
     }
 
     public static String loadPrefString(Context context, String featureName, int featureNum) {
         if (loadPref || featureNum <= 0) {
-            String str = Preferences.with(context).readString(featureNum);
-            Changes(context, featureNum, featureName, 0, false, str);
-            return str;
+            String text = Preferences.with(context).readString(featureNum);
+            Changes(context, featureNum, featureName, 0,0, false, text);
+            return text;
         }
         return "";
     }
@@ -148,6 +164,33 @@ public class Preferences {
      */
     public void writeInt(int where, int what) {
         sharedPreferences.edit().putInt(String.valueOf(where), what).apply();
+    }
+
+    // long related methods
+
+    /**
+     * @param what
+     * @return Returns the stored value of 'what'
+     */
+    public long readLong(String what) {
+        return sharedPreferences.getLong(what, DEFAULT_LONG_VALUE);
+    }
+
+    /**
+     * @param what
+     * @param defaultLong
+     * @return Returns the stored value of 'what'
+     */
+    public long readLong(String what, long defaultLong) {
+        return sharedPreferences.getLong(what, defaultLong);
+    }
+
+    /**
+     * @param where
+     * @param what
+     */
+    public void writeLong(String where, long what) {
+        sharedPreferences.edit().putLong(where, what).apply();
     }
 
     // boolean related methods

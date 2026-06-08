@@ -675,6 +675,12 @@ public class Menu {
                     if (strSplit.length == 2)
                         InputNum(linearLayout, featNum, strSplit[1], 0);
                     break;
+                case "InputLValue":
+                    if (strSplit.length == 3)
+                        InputLNum(linearLayout, featNum, strSplit[2], Long.parseLong(strSplit[1]));
+                    if (strSplit.length == 2)
+                        InputLNum(linearLayout, featNum, strSplit[1], 0);
+                    break;
                 case "CheckBox":
                     CheckBox(linearLayout, featNum, strSplit[1], switchedOn);
                     break;
@@ -1069,7 +1075,8 @@ public class Menu {
             btndialog.setOnClickListener(view1 -> {
                 int num1;
                 try {
-                    num1 = Integer.parseInt(TextUtils.isEmpty(edittext.getText().toString()) ? "0" : edittext.getText().toString());
+                    String inp = edittext.getText().toString();
+                    num1 = Integer.parseInt(inp.isEmpty() ? "0" : inp);
                     if (maxValue != 0 && num1 >= maxValue) {
                         num1 = maxValue;
                     }
@@ -1081,6 +1088,154 @@ public class Menu {
                 textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num1 + "</font>"));
                 alert.dismiss();
                 Preferences.changeFeatureInt(getContext, featName, featNum, num1);
+                edittext.setFocusable(false);
+            });
+            linearLayout1.addView(titleText);
+            linearLayout1.addView(TextViewNote);
+            linearLayout1.addView(edittext);
+            linearLayout1.addView(btndialog);
+            alert.setView(linearLayout1);
+            alert.show();
+        });
+
+        linearLayout.addView(linearLayout2);
+        linearLayout2.addView(textView);
+        linearLayout2.addView(textView2);
+        linearLayout.addView(button);
+
+        linLayout.addView(linearLayout);
+    }
+
+    @SuppressLint({"SetTextI18n", "SuspiciousIndentation"})
+    private void InputLNum(LinearLayout linLayout, final int featNum, final String featName, final long maxValue) {
+        final EditTextNum edittextnum = new EditTextNum();
+
+        LinearLayout linearLayout = new LinearLayout(getContext);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT);
+        layoutParams.setMargins(15, 10, 15, 10);
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setGravity(16);
+        linearLayout.setPadding(10, 8, 8, 8);
+
+        GradientDrawable InputNumgd = new GradientDrawable();
+        InputNumgd.setStroke(3, Color.WHITE);
+        InputNumgd.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+        linearLayout.setBackground(InputNumgd);
+        linearLayout.setLayoutParams(layoutParams);
+
+        LayoutParams lp = new LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+        lp.weight = 1.0f;
+
+        LinearLayout linearLayout2 = new LinearLayout(getContext);
+        linearLayout2.setLayoutParams(lp);
+        linearLayout2.setOrientation(LinearLayout.VERTICAL);
+        linearLayout2.setGravity(Gravity.CENTER);
+
+        TextView textView = new TextView(getContext);
+        textView.setTextColor(TEXT_COLOR);
+        textView.setText(featName);
+        textView.setTextSize(14.0F);
+        textView.setGravity(3);
+        textView.setPadding(5, 0, 0, 0);
+
+        final TextView textView2 = new TextView(getContext);
+        long num = Preferences.loadPrefLong(getContext, featName, featNum);
+        edittextnum.setLongNum((num == 0) ? 1 : num);
+        textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num + "</font>"));
+        textView2.setTextColor(Color.WHITE);
+        textView2.setTextSize(14.0F);
+        textView2.setGravity(3);
+        textView2.setPadding(5, 0, 0, 0);
+
+        final Button button = new Button(getContext);
+        button.setText("ENTER");
+        GradientDrawable enter1 = new GradientDrawable();
+        enter1.setColor(BTN_COLOR);
+        enter1.setStroke(3, Color.WHITE);
+        enter1.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+
+        button.setBackground(enter1);
+        button.setTextColor(TEXT_COLOR);
+
+        button.setOnClickListener(view -> {
+            final AlertDialog alert = new AlertDialog.Builder(getContext, 2).create();
+            if (overlayRequired) {
+                Objects.requireNonNull(alert.getWindow()).setType(Build.VERSION.SDK_INT >= 26 ? 2038 : 2002);
+            }
+
+            //LinearLayout
+            LinearLayout linearLayout1 = new LinearLayout(getContext);
+            linearLayout1.setPadding(5, 5, 5, 5);
+            linearLayout1.setOrientation(LinearLayout.VERTICAL);
+            GradientDrawable box2 = new GradientDrawable();
+            box2.setColor(LST_MAB);
+            box2.setStroke(4, Color.WHITE, 4, 4);
+            linearLayout1.setBackground(box2);
+            linearLayout1.setElevation(5.0F);
+
+            //TextView
+            final TextView titleText = new TextView(getContext);
+            titleText.setText(Html.fromHtml("<u>" + featName + "</u>"));
+            titleText.setGravity(Gravity.CENTER);
+            titleText.setTypeface(Typeface.DEFAULT_BOLD);
+            titleText.setTextColor(TEXT_COLOR);
+            titleText.setTextSize(22f);
+
+            //TextView
+            final TextView TextViewNote = new TextView(getContext);
+            TextViewNote.setGravity(Gravity.CENTER);
+            TextViewNote.setTextSize(14.0F);
+            TextViewNote.setText("Click \"Set Value\" button to apply changes || outside to cancel");
+            TextViewNote.setPadding(10, 5, 10, 5);
+            TextViewNote.setTextColor(TEXT_COLOR);
+
+            LayoutParams lpl = new LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+            lpl.weight = 1;
+
+            //Edit text
+            final EditText edittext = new EditText(getContext);
+            edittext.setLayoutParams(lpl);
+            edittext.setMaxLines(1);
+            edittext.setHint("Write Value");
+            edittext.setWidth(convertDipToPixels(300));
+            edittext.setTextColor(TEXT_COLOR);
+            edittext.setInputType(InputType.TYPE_CLASS_NUMBER);
+            edittext.setKeyListener(DigitsKeyListener.getInstance("0123456789-"));
+            InputFilter[] FilterArray = new InputFilter[1];
+            FilterArray[0] = new InputFilter.LengthFilter(10);
+            edittext.setFilters(FilterArray);
+
+            //Button
+            LayoutParams layoutParams1 = new LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+            layoutParams1.setMargins(20, 10, 20, 15);
+
+            Button btndialog = new Button(getContext);
+            btndialog.setLayoutParams(layoutParams1);
+            GradientDrawable setvalue2 = new GradientDrawable();
+            setvalue2.setColor(BTN_COLOR);
+
+            setvalue2.setCornerRadii(new float[]{30, 30, 0, 0, 30, 30, 0, 0});
+            setvalue2.setStroke(3, Color.WHITE);
+            btndialog.setBackground(setvalue2);
+            btndialog.setTextColor(TEXT_COLOR);
+            btndialog.setPadding(15, 10, 15, 10);
+            btndialog.setText("SET VALUE");
+            btndialog.setOnClickListener(view1 -> {
+                long num1;
+                try {
+                    String inp = edittext.getText().toString();
+                    num1 = Long.parseLong(inp.isEmpty() ? "0" : inp);
+                    if (maxValue != 0 && num >= maxValue) {
+                        num1 = maxValue;
+                    }
+                } catch (NumberFormatException ex) {
+                    num1 = Long.MAX_VALUE;
+                }
+
+                edittextnum.setLongNum(num1);
+                textView2.setText(Html.fromHtml("-> " + "<font color='" + NumberTxtColor + "'>" + num1 + "</font>"));
+                alert.dismiss();
+                Preferences.changeFeatureLong(getContext, featName, featNum, num1);
                 edittext.setFocusable(false);
             });
             linearLayout1.addView(titleText);
@@ -1380,9 +1535,14 @@ public class Menu {
 
     private static class EditTextNum {
         int val;
+        long val2;
 
         public void setNum(int value) {
             val = value;
+        }
+
+        public void setLongNum(long value) {
+            val2 = value;
         }
     }
 

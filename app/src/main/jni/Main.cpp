@@ -460,6 +460,7 @@ jobjectArray GetFeatureList3(JNIEnv *env, jobject context) {
             ("15_Toggle_Allow All Characters"),
             ("16_InputText_Player Name"),
             ("17_InputValue_Player Level"),
+            ("18_InputLValue_Dummy Long Input"),
 
     /*
             ("Category_The Category 3"), //Not counted
@@ -575,8 +576,8 @@ jobjectArray GetFeatureList4(JNIEnv *env, jobject context) {
 }
 
 void Changes(JNIEnv *env, jclass clazz, jobject obj,
-                                        jint featNum, jstring featName, jint value,
-                                        jboolean boolean, jstring str) {
+                                        jint featNum, jstring featName, jint value, jlong Lvalue,
+                                        jboolean boolean, jstring text) {
 
     //BE CAREFUL NOT TO ACCIDENTALLY REMOVE break;
 
@@ -627,11 +628,15 @@ void Changes(JNIEnv *env, jclass clazz, jobject obj,
             AllowAllCharacters = boolean;
             break;
         case 16:
-            PlayerName = env->GetStringUTFChars(str, nullptr);
+            PlayerName = env->GetStringUTFChars(text, nullptr);
             break;
         case 17:
             PlayerLevel = value;
             break;
+        case 18: {
+            int64_t Long = Lvalue;
+            break;
+        }
         default:
             break;
   
@@ -707,7 +712,7 @@ int RegisterMenu(JNIEnv *env) {
 
 int RegisterPreferences(JNIEnv *env) {
     JNINativeMethod methods[] = {
-            {("Changes"), ("(Landroid/content/Context;ILjava/lang/String;IZLjava/lang/String;)V"), reinterpret_cast<void *>(Changes)},
+            {("Changes"), ("(Landroid/content/Context;ILjava/lang/String;IJZLjava/lang/String;)V"), reinterpret_cast<void *>(Changes)},
     };
     jclass clazz = env->FindClass(("com/relgl/modmenu/Preferences"));
     if (!clazz)
