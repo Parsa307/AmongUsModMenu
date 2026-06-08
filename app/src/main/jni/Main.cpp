@@ -342,6 +342,8 @@ jobjectArray GetFeatureList(JNIEnv *env, jobject context) {
             ("CheckBox_The Check Box"),
             ("InputValue_Input number"),
             ("InputValue_1000_Input number 2"), //Max value
+            ("1111_InputLValue_Input long number"),
+            ("InputLValue_1000000000000_Input long number 2"), //Max value
             ("InputText_Input text"),
             ("RadioButton_Radio buttons_OFF,Mod 1,Mod 2,Mod 3"),
 
