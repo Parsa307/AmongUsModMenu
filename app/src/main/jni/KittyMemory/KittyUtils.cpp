@@ -1,123 +1,27 @@
 #include "KittyUtils.hpp"
 
-#ifdef __ANDROID__
-#include <sys/system_properties.h>
-#endif
-
 namespace KittyUtils
 {
 
-#ifdef __ANDROID__
-    std::string getExternalStorage()
+    std::vector<uint8_t> randomBytes(std::size_t length)
     {
-        char *storage = getenv("EXTERNAL_STORAGE");
-        return storage ? storage : "/sdcard";
-    }
+        static std::mutex mtx;
+        std::lock_guard<std::mutex> lock(mtx);
 
-    int getAndroidVersion()
-    {
-        static int ver = 0;
-        if (ver > 0)
-            return ver;
+        static std::mt19937 gen{std::random_device{}()};
 
-        char buf[0xff] = {0};
-        if (__system_property_get("ro.build.version.release", buf))
-            ver = std::atoi(buf);
+        std::uniform_int_distribution<uint16_t> dist(0, 255);
 
-        return ver;
-    }
-
-    int getAndroidSDK()
-    {
-        static int sdk = 0;
-        if (sdk > 0)
-            return sdk;
-
-        char buf[0xff] = {0};
-        if (__system_property_get("ro.build.version.sdk", buf))
-            sdk = std::atoi(buf);
-
-        return sdk;
-    }
-#endif
-
-    std::string fileNameFromPath(const std::string &filePath)
-    {
-        std::string filename;
-        const size_t last_slash_idx = filePath.find_last_of("/\\");
-        if (std::string::npos != last_slash_idx)
-            filename = filePath.substr(last_slash_idx + 1);
-        return filename;
-    }
-
-    std::string fileDirectory(const std::string &filePath)
-    {
-        std::string directory;
-        const size_t last_slash_idx = filePath.find_last_of("/\\");
-        if (std::string::npos != last_slash_idx)
-            directory = filePath.substr(0, last_slash_idx);
-        return directory;
-    }
-
-    std::string fileExtension(const std::string &filePath)
-    {
-        std::string ext;
-        const size_t last_slash_idx = filePath.find_last_of(".");
-        if (std::string::npos != last_slash_idx)
-            ext = filePath.substr(last_slash_idx + 1);
-        return ext;
-    }
-
-    void String::Trim(std::string &str)
-    {
-        // https://www.techiedelight.com/remove-whitespaces-string-cpp/
-        str.erase(std::remove_if(str.begin(), str.end(), [](char c)
-        { return (c == ' ' || c == '\n' || c == '\r' ||
-                  c == '\t' || c == '\v' || c == '\f'); }),
-                  str.end());
-    }
-
-    bool String::ValidateHex(std::string &hex)
-    {
-        if (hex.empty()) return false;
-
-        if (hex.compare(0, 2, "0x") == 0)
-            hex.erase(0, 2);
-
-        Trim(hex);  // first remove spaces
-
-        if (hex.length() < 2 || hex.length() % 2 != 0) return false;
-
-        for (size_t i = 0; i < hex.length(); i++)
+        std::vector<uint8_t> data(length);
+        for (auto &b : data)
         {
-            if (!std::isxdigit((unsigned char)hex[i]))
-                return false;
+            b = static_cast<uint8_t>(dist(gen));
         }
 
-        return true;
+        return data;
     }
 
-    std::string String::Fmt(const char *fmt, ...)
-    {
-        if (!fmt)
-            return "";
-
-        va_list args;
-
-        va_start(args, fmt);
-        size_t size = vsnprintf(nullptr, 0, fmt, args) + 1;  // extra space for '\0'
-        va_end(args);
-
-        std::vector<char> buffer(size, '\0');
-
-        va_start(args, fmt);
-        vsnprintf(&buffer[0], size, fmt, args);
-        va_end(args);
-
-        return std::string(&buffer[0]);
-    }
-
-    std::string String::Random(size_t length)
+    std::string randomString(size_t length)
     {
         static const std::string chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -125,7 +29,8 @@ namespace KittyUtils
         std::lock_guard<std::mutex> lock(mtx);
 
         static std::default_random_engine rnd(std::random_device{}());
-        static std::uniform_int_distribution<std::string::size_type> dist(0, chars.size() - 1);
+
+        std::uniform_int_distribution<std::string::size_type> dist(0, chars.size() - 1);
 
         std::string str(length, '\0');
         for (size_t i = 0; i < length; ++i)
@@ -134,52 +39,341 @@ namespace KittyUtils
         return str;
     }
 
-    // https://tweex.net/post/c-anything-tofrom-a-hex-string/
-
-    /*
-        Convert a block of data to a hex string
-    */
-    std::string data2Hex(
-        const void *data,        //!< Data to convert
-        const size_t dataLength  //!< Length of the data to convert
-    )
+#ifdef __ANDROID__
+    int Android::getVersion()
     {
-        const auto *byteData = reinterpret_cast<const unsigned char *>(data);
-        std::stringstream hexStringStream;
+        static int ver = 0;
+        if (ver > 0)
+            return ver;
 
-        hexStringStream << std::hex << std::setfill('0');
-        for (size_t index = 0; index < dataLength; ++index)
-            hexStringStream << std::setw(2) << static_cast<int>(byteData[index]);
-        return hexStringStream.str();
+        ver = getSystemProperty<int>("ro.build.version.release", 0);
+        return ver;
     }
 
-    /*
-        Convert a hex string to a block of data
-    */
-    void dataFromHex(
-        const std::string &in,  //!< Input hex string
-        void *data              //!< Data store
-    )
+    int Android::getSDK()
     {
-        size_t length = in.length();
-        auto *byteData = reinterpret_cast<unsigned char *>(data);
+        static int sdk = 0;
+        if (sdk > 0)
+            return sdk;
 
-        std::stringstream hexStringStream;
-        hexStringStream >> std::hex;
-        for (size_t strIndex = 0, dataIndex = 0; strIndex < length; ++dataIndex)
+        sdk = getSystemProperty<int>("ro.build.version.sdk", 0);
+        return sdk;
+    }
+
+    bool Android::is64BitSupported()
+    {
+        static bool once = false;
+        static bool is64 = false;
+        if (!once)
         {
-            // Read out and convert the string two characters at a time
-            const char tmpStr[3] = {in[strIndex++], in[strIndex++], 0};
+            char value[0xff]{};
+            if (__system_property_get("ro.product.cpu.abilist", value) == 0)
+                __system_property_get("ro.product.cpu.abi", value);
 
-            // Reset and fill the string stream
-            hexStringStream.clear();
-            hexStringStream.str(tmpStr);
-
-            // Do the conversion
-            int tmpValue = 0;
-            hexStringStream >> tmpValue;
-            byteData[dataIndex] = static_cast<unsigned char>(tmpValue);
+            std::string abi = value;
+            is64 = abi.find("64") != std::string::npos;
+            once = true;
         }
+        return is64;
+    }
+
+    std::string Android::getAppInternalDataDir()
+    {
+        std::string dir = getAppInternalCacheDir();
+        if (!dir.empty())
+        {
+            return Path::fileDirectory(dir);
+        }
+        return dir;
+    }
+
+    std::string Android::getAppInternalFilesDir()
+    {
+        std::string dir = getAppInternalCacheDir();
+        if (!dir.empty())
+        {
+            dir = Path::fileDirectory(dir);
+            dir += "/files";
+        }
+        return dir;
+    }
+
+    std::string Android::getAppInternalCacheDir()
+    {
+        const char *tmpdir = std::getenv("TMPDIR");
+        if (tmpdir && tmpdir[0] != '\0' && access(tmpdir, F_OK) == 0)
+            return tmpdir;
+
+        std::string dir = "/data/data/";
+        dir += getprogname();
+        dir += "/cache";
+        if (access(dir.c_str(), F_OK) == 0)
+            return dir;
+
+        dir = "/data/user/";
+        dir += std::to_string(getUserId());
+        dir += "/";
+        dir += getprogname();
+        dir += "/cache";
+        if (access(dir.c_str(), F_OK) == 0)
+            return dir;
+
+        return std::string();
+    }
+#endif
+
+    std::string Path::fileName(const std::string &filePath)
+    {
+        std::string filename;
+        const size_t last_slash_idx = filePath.find_last_of("/\\");
+        if (std::string::npos != last_slash_idx)
+            filename = filePath.substr(last_slash_idx + 1);
+        return filename;
+    }
+
+    std::string Path::fileDirectory(const std::string &filePath)
+    {
+        std::string directory;
+        const size_t last_slash_idx = filePath.find_last_of("/\\");
+        if (std::string::npos != last_slash_idx)
+            directory = filePath.substr(0, last_slash_idx);
+        return directory;
+    }
+
+    std::string Path::fileExtension(const std::string &filePath)
+    {
+        std::string ext;
+        const size_t last_slash_idx = filePath.find_last_of(".");
+        if (std::string::npos != last_slash_idx)
+            ext = filePath.substr(last_slash_idx + 1);
+        return ext;
+    }
+
+    bool String::startsWith(const std::string &str, const std::string &prefix, bool sensitive)
+    {
+        if (str.length() < prefix.length())
+            return false;
+        if (sensitive)
+        {
+            return str.compare(0, prefix.length(), prefix) == 0;
+        }
+        return std::equal(prefix.begin(), prefix.end(), str.begin(), charEqualsIgnoreCase);
+    }
+
+    bool String::contains(const std::string &str, const std::string &substring, bool sensitive)
+    {
+        if (str.length() < substring.length())
+            return false;
+        if (sensitive)
+        {
+            return str.find(substring) != std::string::npos;
+        }
+        auto it = std::search(str.begin(), str.end(), substring.begin(), substring.end(), charEqualsIgnoreCase);
+        return it != str.end();
+    }
+
+    bool String::endsWith(const std::string &str, const std::string &suffix, bool sensitive)
+    {
+        if (str.length() < suffix.length())
+            return false;
+        if (sensitive)
+        {
+            return str.compare(str.length() - suffix.length(), suffix.length(), suffix) == 0;
+        }
+        return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin(), charEqualsIgnoreCase);
+    }
+
+    bool String::startsWith(const std::string &str, const std::vector<std::string> &prefixes, bool sensitive)
+    {
+        for (const auto &prefix : prefixes)
+        {
+            if (startsWith(str, prefix, sensitive))
+                return true;
+        }
+        return false;
+    }
+
+    bool String::contains(const std::string &str, const std::vector<std::string> &substrings, bool sensitive)
+    {
+        for (const auto &substring : substrings)
+        {
+            if (contains(str, substring, sensitive))
+                return true;
+        }
+        return false;
+    }
+
+    bool String::endsWith(const std::string &str, const std::vector<std::string> &suffixes, bool sensitive)
+    {
+        for (const auto &suffix : suffixes)
+        {
+            if (endsWith(str, suffix, sensitive))
+                return true;
+        }
+        return false;
+    }
+
+    void String::trim(std::string &str)
+    {
+        str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+    }
+
+    bool String::isValidHex(const std::string &hex)
+    {
+        if (hex.empty())
+            return false;
+
+        const char *data = hex.c_str();
+        size_t len = hex.length();
+        size_t i = 0;
+
+        while (i < len && ::isspace(static_cast<unsigned char>(data[i])))
+        {
+            i++;
+        }
+
+        if (i + 2 <= len && data[i] == '0' && (data[i + 1] == 'x' || data[i + 1] == 'X'))
+        {
+            i += 2;
+        }
+
+        size_t digitCount = 0;
+
+        for (; i < len; ++i)
+        {
+            unsigned char c = static_cast<unsigned char>(data[i]);
+
+            if (::isspace(c))
+            {
+                continue;
+            }
+
+            if (!::isxdigit(c))
+            {
+                return false;
+            }
+
+            digitCount++;
+        }
+
+        return (digitCount > 0 && (digitCount % 2 == 0));
+    }
+
+    bool String::validateHex(std::string &hex)
+    {
+        if (hex.empty())
+            return false;
+
+        size_t len = hex.length();
+        size_t startOffset = (len >= 2 && hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X')) ? 2 : 0;
+
+        size_t actualByteCount = 0;
+        bool needsCleaning = (startOffset > 0);
+
+        for (size_t i = startOffset; i < len; ++i)
+        {
+            unsigned char c = static_cast<unsigned char>(hex[i]);
+
+            if (::isspace(c))
+            {
+                needsCleaning = true;
+                continue;
+            }
+
+            if (!::isxdigit(c))
+                return false;
+
+            actualByteCount++;
+        }
+
+        if (actualByteCount == 0 || (actualByteCount % 2 != 0))
+            return false;
+
+        if (needsCleaning)
+        {
+            std::string cleaned;
+            cleaned.reserve(actualByteCount);
+            for (size_t i = startOffset; i < len; ++i)
+            {
+                unsigned char c = static_cast<unsigned char>(hex[i]);
+                if (!::isspace(c))
+                {
+                    cleaned.push_back(c);
+                }
+            }
+            hex = std::move(cleaned);
+        }
+
+        return true;
+    }
+
+    std::string String::fmt(const char *fmt, ...)
+    {
+        if (!fmt)
+            return "";
+
+        va_list args;
+        va_start(args, fmt);
+        int size = vsnprintf(nullptr, 0, fmt, args);
+        va_end(args);
+
+        if (size <= 0)
+            return "";
+
+        std::string str;
+        str.resize(static_cast<size_t>(size));
+
+        va_start(args, fmt);
+        vsnprintf(&str[0], static_cast<size_t>(size) + 1, fmt, args);
+        va_end(args);
+
+        return str;
+    }
+
+    bool Data::fromHex(std::string in, void *data)
+    {
+        if (in.empty() || !data || !String::validateHex(in))
+            return false;
+
+        size_t length = in.length();
+        auto *byteData = reinterpret_cast<uint8_t *>(data);
+
+        auto charToNibble = [](char c) -> uint8_t {
+            if (c >= '0' && c <= '9')
+                return c - '0';
+            if (c >= 'a' && c <= 'f')
+                return c - 'a' + 10;
+            if (c >= 'A' && c <= 'F')
+                return c - 'A' + 10;
+            return 0;
+        };
+
+        for (size_t strIndex = 0, dataIndex = 0; strIndex < length; strIndex += 2, ++dataIndex)
+        {
+            byteData[dataIndex] = (charToNibble(in[strIndex]) << 4) | charToNibble(in[strIndex + 1]);
+        }
+
+        return true;
+    }
+
+    std::string Data::toHex(const void *data, const size_t dataLength)
+    {
+        if (!data || dataLength == 0)
+            return "";
+
+        static const char hexTable[] = "0123456789ABCDEF";
+        const auto *byteData = reinterpret_cast<const uint8_t *>(data);
+
+        std::string hexString;
+        hexString.resize(dataLength * 2);
+
+        for (size_t i = 0; i < dataLength; ++i)
+        {
+            hexString[i * 2] = hexTable[(byteData[i] >> 4) & 0x0F];
+            hexString[i * 2 + 1] = hexTable[byteData[i] & 0x0F];
+        }
+
+        return hexString;
     }
 
 #ifdef __ANDROID__
@@ -193,12 +387,12 @@ namespace KittyUtils
     {
         namespace ElfHash
         {
-            uint32_t HashSymName(const char *name)
+            uint32_t hashSymName(const char *name)
             {
                 uint32_t h = 0, g;
                 for (; *name; name++)
                 {
-                    h = (h << 4) + *name;
+                    h = (h << 4) + static_cast<uint8_t>(*name);
                     g = h & 0xf0000000;
                     if (g)
                         h ^= g >> 24;
@@ -207,13 +401,16 @@ namespace KittyUtils
                 return h;
             }
 
-            const KT_ElfW(Sym) * LookupByName(uintptr_t elfhash,
+            const KT_ElfW(Sym) * lookupByName(uintptr_t elfhash,
                                               uintptr_t symtab,
                                               uintptr_t strtab,
                                               size_t syment,
                                               size_t strsz,
                                               const char *symbol_name)
             {
+                if (!elfhash || !symtab || !strtab || !symbol_name)
+                    return nullptr;
+
                 const auto *elf_hash = reinterpret_cast<const uint32_t *>(elfhash);
                 const auto *symbol_table = reinterpret_cast<const uint8_t *>(symtab);
                 const auto *string_table = reinterpret_cast<const char *>(strtab);
@@ -229,54 +426,77 @@ namespace KittyUtils
                 const uint32_t *bucket = elf_hash + 2;
                 const uint32_t *chain = bucket + num_bucket;
 
-                const uint32_t name_hash = HashSymName(symbol_name);
-                for (uint32_t i = bucket[name_hash % num_bucket]; i != 0 && i < num_chain; i = chain[i])
-                {
-                    const auto *symbol = reinterpret_cast<const KT_ElfW(Sym) *>(symbol_table + (syment * i));
-                    if (!symbol || symbol->st_name >= strsz)
-                        break;
+                uint32_t name_hash = hashSymName(symbol_name);
 
-                    std::string sym_str = std::string(string_table + symbol->st_name);
-                    if (!sym_str.empty() && sym_str == symbol_name)
+                uint32_t i = bucket[name_hash % num_bucket];
+
+                while (i != 0 && i < num_chain)
+                {
+                    const KT_ElfW(Sym) *symbol = reinterpret_cast<const KT_ElfW(Sym) *>(symbol_table + syment * i);
+
+                    if (!symbol || symbol->st_name >= strsz)
+                    {
+                        i = chain[i];
+                        continue;
+                    }
+
+                    const char *sym_str = string_table + symbol->st_name;
+
+                    const char *p1 = sym_str;
+                    const char *p2 = symbol_name;
+                    bool match = true;
+                    while (*p1 && *p2)
+                    {
+                        if (*p1 != *p2)
+                        {
+                            match = false;
+                            break;
+                        }
+                        p1++;
+                        p2++;
+                    }
+                    if (match && *p2 == '\0')
                         return symbol;
+
+                    i = chain[i];
                 }
 
                 return nullptr;
             }
-        }  // namespace ElfHash
-    }  // namespace Elf
+        } // namespace ElfHash
+    } // namespace Elf
 
     namespace Elf
     {
         namespace GnuHash
         {
-            uint32_t HashSymName(const char *name)
+            uint32_t hashSymName(const char *name)
             {
                 uint32_t h = 5381;
                 for (; *name; name++)
-                    h = (h << 5) + h + *name;
+                    h = ((h << 5) + h) + static_cast<uint8_t>(*name); // h*33 + c
                 return h;
             }
 
-            const KT_ElfW(Sym) * LookupByName(uintptr_t gnuhash,
+            const KT_ElfW(Sym) * lookupByName(uintptr_t gnuhash,
                                               uintptr_t symtab,
                                               uintptr_t strtab,
                                               size_t syment,
                                               size_t strsz,
                                               const char *symbol_name)
             {
+                if (!gnuhash || !symtab || !strtab || !symbol_name)
+                    return nullptr;
+
                 const auto *gnu_hash = reinterpret_cast<const uint32_t *>(gnuhash);
                 const auto *symbol_table = reinterpret_cast<const uint8_t *>(symtab);
                 const auto *string_table = reinterpret_cast<const char *>(strtab);
-
-                const uint32_t name_hash = HashSymName(symbol_name);
 
                 const uint32_t num_buckets = gnu_hash[0];
                 if (!num_buckets)
                     return nullptr;
 
                 const uint32_t sym_offset = gnu_hash[1];
-
                 const uint32_t bloom_size = gnu_hash[2];
                 // must be a power of 2
                 if (!bloom_size || (bloom_size & (bloom_size - 1)) != 0)
@@ -287,8 +507,11 @@ namespace KittyUtils
                 const auto *buckets = reinterpret_cast<const uint32_t *>(&bloom[bloom_size]);
                 const uint32_t *chain = &buckets[num_buckets];
 
-                uintptr_t word = bloom[(name_hash / KT_ELFCLASS_BITS) % bloom_size];
-                uintptr_t mask = 0 | (uintptr_t)1 << (name_hash % KT_ELFCLASS_BITS) | (uintptr_t)1 << ((name_hash >> bloom_shift) % KT_ELFCLASS_BITS);
+                uint32_t name_hash = hashSymName(symbol_name);
+
+                uintptr_t word = bloom[(name_hash / (sizeof(uintptr_t) * 8)) % bloom_size];
+                uintptr_t mask = ((uintptr_t)1 << (name_hash % (sizeof(uintptr_t) * 8))) |
+                                 ((uintptr_t)1 << ((name_hash >> bloom_shift) % (sizeof(uintptr_t) * 8)));
 
                 // If at least one bit is not set, a symbol is surely missing.
                 if ((word & mask) != mask)
@@ -298,22 +521,36 @@ namespace KittyUtils
                 if (sym_idx < sym_offset)
                     return nullptr;
 
-                // Loop through the chain.
                 while (true)
                 {
-                    const auto *symbol = reinterpret_cast<const KT_ElfW(Sym) *>(symbol_table + (syment * sym_idx));
+                    const KT_ElfW(Sym) *symbol = reinterpret_cast<const KT_ElfW(Sym) *>(symbol_table +
+                                                                                        syment * sym_idx);
+
                     if (!symbol || symbol->st_name >= strsz)
                         break;
 
-                    const uint32_t hash = chain[sym_idx - sym_offset];
+                    uint32_t hash = chain[sym_idx - sym_offset];
                     if ((name_hash | 1) == (hash | 1))
                     {
-                        std::string sym_str = std::string(string_table + symbol->st_name);
-                        if (!sym_str.empty() && sym_str == symbol_name)
+                        const char *sym_str = string_table + symbol->st_name;
+
+                        const char *p1 = sym_str;
+                        const char *p2 = symbol_name;
+                        bool match = true;
+                        while (*p1 && *p2)
+                        {
+                            if (*p1 != *p2)
+                            {
+                                match = false;
+                                break;
+                            }
+                            p1++;
+                            p2++;
+                        }
+                        if (match && *p2 == '\0')
                             return symbol;
                     }
 
-                    // Chain ends with an element with the lowest bit set to 1.
                     if (hash & 1)
                         break;
 
@@ -322,217 +559,352 @@ namespace KittyUtils
 
                 return nullptr;
             }
-        }  // namespace GnuHash
-    }  // namespace Elf
+        } // namespace GnuHash
+    } // namespace Elf
 
     namespace Zip
     {
-        bool GetCentralDirInfo(int fd, uint64_t fileSize, bool &isZip64, uint64_t &cdOffset, uint64_t &totalEntries)
+#define KT_MIN_EOCD_SIZE 22
+#define KT_EOCD_SIGNATURE 0x06054b50
+#define KT_ZIP64_EOCD_SIGNATURE 0x06064b50
+#define KT_ZIP64_EOCD_LOCATOR 0x07064b50
+#define KT_CENTRAL_DIR_SIGNATURE 0x02014b50
+#define KT_LOCAL_HEADER_SIGNATURE 0x04034b50
+#define KT_ZIP64_EXTRA_ID 0x0001
+#define KT_MAX_NAME_LEN 65535
+#define KT_MAX_EOCD_SEARCH (1024 * 64)
+#define KT_CENTRAL_DIR_SIZE 46
+#define KT_LOCAL_HEADER_SIZE 30
+
+        inline bool read16(const uint8_t *base, uint64_t size, uint64_t offset, uint16_t &out)
         {
-            if (fileSize < 22)
-            {
-                KITTY_LOGD("File too small: %" PRIx64 " bytes", fileSize);
+            if (offset + 2 > size)
                 return false;
-            }
-
-            void *map = mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE, fd, 0);
-            if (map == MAP_FAILED)
-            {
-                KITTY_LOGD("mmap failed: %s", strerror(errno));
-                return false;
-            }
-
-            uint8_t *data = static_cast<uint8_t *>(map);
-
-            // Find EOCD or ZIP64 EOCD locator
-            int64_t offset = fileSize - 22;
-            uint32_t sig;
-            while (offset >= 0)
-            {
-                sig = *reinterpret_cast<uint32_t *>(data + offset);
-                if (sig == KT_EOCD_SIGNATURE || (sig == KT_ZIP64_EOCD_LOCATOR && *reinterpret_cast<uint32_t *>(data + offset - 20) == KT_ZIP64_EOCD_SIGNATURE))
-                {
-                    break;
-                }
-                --offset;
-            }
-
-            if (offset < 0)
-            {
-                KITTY_LOGD("EOCD not found");
-                munmap(map, fileSize);
-                return false;
-            }
-
-            // Read EOCD or ZIP64 EOCD
-            isZip64 = (sig == KT_ZIP64_EOCD_LOCATOR);
-            if (isZip64)
-            {
-                totalEntries = *reinterpret_cast<uint64_t *>(data + offset - 20 + 12);
-                cdOffset = *reinterpret_cast<uint64_t *>(data + offset - 20 + 36);
-            }
-            else
-            {
-                totalEntries = *reinterpret_cast<uint16_t *>(data + offset + 8);
-                cdOffset = *reinterpret_cast<uint32_t *>(data + offset + 16);
-            }
-
-            munmap(map, fileSize);
+            std::memcpy(&out, base + offset, 2);
             return true;
         }
 
-        std::vector<ZipFileInfo> listFilesInZip(const std::string &zipPath)
+        inline bool read32(const uint8_t *base, uint64_t size, uint64_t offset, uint32_t &out)
         {
-            std::vector<ZipFileInfo> files;
+            if (offset + 4 > size)
+                return false;
+            std::memcpy(&out, base + offset, 4);
+            return true;
+        }
+
+        inline bool read64(const uint8_t *base, uint64_t size, uint64_t offset, uint64_t &out)
+        {
+            if (offset + 8 > size)
+                return false;
+            std::memcpy(&out, base + offset, 8);
+            return true;
+        }
+
+        bool findCentralDirectory(const uint8_t *data, uint64_t fileSize, uint64_t *cdOffset, uint64_t *totalEntries)
+        {
+            if (fileSize < KT_MIN_EOCD_SIZE)
+                return false;
+
+            uint64_t searchStart = (fileSize > KT_MAX_EOCD_SEARCH) ? fileSize - KT_MAX_EOCD_SEARCH : 0;
+
+            for (int64_t offset = fileSize - 4; offset >= (int64_t)searchStart; --offset)
+            {
+                uint32_t sig;
+                if (!read32(data, fileSize, offset, sig))
+                    continue;
+
+                if (sig == KT_EOCD_SIGNATURE)
+                {
+                    uint16_t entries16;
+                    uint32_t cdOff32;
+
+                    if (!read16(data, fileSize, offset + 10, entries16))
+                        return false;
+                    if (!read32(data, fileSize, offset + 16, cdOff32))
+                        return false;
+
+                    if (totalEntries)
+                        *totalEntries = entries16;
+
+                    if (cdOffset)
+                        *cdOffset = cdOff32;
+
+                    return true;
+                }
+
+                if (sig == KT_ZIP64_EOCD_LOCATOR)
+                {
+                    uint64_t zip64EOCDOffset;
+                    if (!read64(data, fileSize, offset + 8, zip64EOCDOffset))
+                        return false;
+
+                    uint32_t zip64sig;
+                    if (!read32(data, fileSize, zip64EOCDOffset, zip64sig))
+                        return false;
+
+                    if (zip64sig != KT_ZIP64_EOCD_SIGNATURE)
+                        return false;
+
+                    uint64_t entries64;
+                    uint64_t cdOff64;
+
+                    if (!read64(data, fileSize, zip64EOCDOffset + 24, entries64))
+                        return false;
+
+                    if (!read64(data, fileSize, zip64EOCDOffset + 48, cdOff64))
+                        return false;
+
+                    if (totalEntries)
+                        *totalEntries = entries64;
+
+                    if (cdOffset)
+                        *cdOffset = cdOff64;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        std::vector<ZipEntryInfo> listEntriesInZip(const std::string &zipPath)
+        {
+            std::vector<ZipEntryInfo> ents;
+
             int fd = KT_EINTR_RETRY(open(zipPath.c_str(), O_RDONLY));
             if (fd < 0)
-            {
-                KITTY_LOGD("open failed: %s, error: %s", zipPath.c_str(), strerror(errno));
-                return files;
-            }
+                return ents;
 
-            // Get file size
-            struct stat st = {};
+            struct stat st{};
             if (fstat(fd, &st) < 0)
             {
-                KITTY_LOGD("fstat failed: %s", strerror(errno));
-                close(fd);
-                return files;
+                KT_EINTR_RETRY(close(fd));
+                return ents;
             }
+
             uint64_t fileSize = st.st_size;
-
-            // Get central directory info
-            bool isZip64;
-            uint64_t cdOffset, totalEntries;
-            if (!GetCentralDirInfo(fd, fileSize, isZip64, cdOffset, totalEntries))
+            if (fileSize < KT_MIN_EOCD_SIZE)
             {
-                close(fd);
-                return files;
+                KT_EINTR_RETRY(close(fd));
+                return ents;
             }
 
-            // Map file for parsing
             void *map = mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE, fd, 0);
-            if (map == MAP_FAILED)
+            if (!map || map == MAP_FAILED)
             {
-                KITTY_LOGD("mmap failed: %s", strerror(errno));
-                close(fd);
-                return files;
+                KT_EINTR_RETRY(close(fd));
+                return ents;
             }
-            uint8_t *data = static_cast<uint8_t *>(map);
 
-            // Parse central directory
-            for (uint64_t offset = cdOffset, i = 0; i < totalEntries; ++i)
+            const uint8_t *data = static_cast<uint8_t *>(map);
+
+            uint64_t cdOffset = 0;
+            uint64_t totalEntries = 0;
+
+            if (!findCentralDirectory(data, fileSize, &cdOffset, &totalEntries))
             {
-                if (*reinterpret_cast<uint32_t *>(data + offset) != KT_CENTRAL_DIR_SIGNATURE)
-                {
-                    KITTY_LOGD("Invalid central directory signature at entry %" PRIu64, i);
-                    break;
-                }
+                munmap(map, fileSize);
+                KT_EINTR_RETRY(close(fd));
+                return ents;
+            }
 
-                ZipFileInfo info;
-                info.compressionMethod = *reinterpret_cast<uint16_t *>(data + offset + 10);
-                info.modTime = *reinterpret_cast<uint16_t *>(data + offset + 12);
-                info.modDate = *reinterpret_cast<uint16_t *>(data + offset + 14);
-                info.crc32 = *reinterpret_cast<uint32_t *>(data + offset + 16);
-                uint32_t compSize32 = *reinterpret_cast<uint32_t *>(data + offset + 20);
-                uint32_t uncompSize32 = *reinterpret_cast<uint32_t *>(data + offset + 24);
+            if (cdOffset >= fileSize)
+            {
+                munmap(map, fileSize);
+                KT_EINTR_RETRY(close(fd));
+                return ents;
+            }
+
+            uint64_t offset = cdOffset;
+            uint64_t parsedEntries = 0;
+
+            while (offset + KT_CENTRAL_DIR_SIZE <= fileSize)
+            {
+                uint32_t sig;
+                if (!read32(data, fileSize, offset, sig))
+                    break;
+
+                if (sig != KT_CENTRAL_DIR_SIGNATURE)
+                    break;
+
+                ZipEntryInfo info{};
+
+                read16(data, fileSize, offset + 10, info.compressionMethod);
+                read16(data, fileSize, offset + 12, info.modTime);
+                read16(data, fileSize, offset + 14, info.modDate);
+                read32(data, fileSize, offset + 16, info.crc32);
+
+                uint32_t compSize32, uncompSize32;
+                read32(data, fileSize, offset + 20, compSize32);
+                read32(data, fileSize, offset + 24, uncompSize32);
+
                 info.compressedSize = compSize32;
                 info.uncompressedSize = uncompSize32;
-                uint16_t nameLen = *reinterpret_cast<uint16_t *>(data + offset + 28);
-                uint16_t extraLen = *reinterpret_cast<uint16_t *>(data + offset + 30);
-                uint16_t commentLen = *reinterpret_cast<uint16_t *>(data + offset + 32);
 
-                // Read file name
-                if (nameLen <= KT_MAX_NAME_LEN)
+                uint16_t nameLen, extraLen, commentLen;
+                read16(data, fileSize, offset + 28, nameLen);
+                read16(data, fileSize, offset + 30, extraLen);
+                read16(data, fileSize, offset + 32, commentLen);
+
+                uint32_t localHeaderOffset32;
+                read32(data, fileSize, offset + 42, localHeaderOffset32);
+
+                uint64_t entrySize = KT_CENTRAL_DIR_SIZE + nameLen + extraLen + commentLen;
+                if (offset + entrySize > fileSize)
+                    break;
+
+                if (nameLen > KT_MAX_NAME_LEN)
+                    break;
+
+                info.fileName.assign(reinterpret_cast<const char *>(data + offset + KT_CENTRAL_DIR_SIZE), nameLen);
+
+                uint64_t localHeaderOffset = localHeaderOffset32;
+
+                // ZIP64 handling
+                if (compSize32 == 0xFFFFFFFF || uncompSize32 == 0xFFFFFFFF || localHeaderOffset32 == 0xFFFFFFFF)
                 {
-                    info.fileName.assign(reinterpret_cast<char *>(data + offset + 46), nameLen);
+                    uint64_t extraOffset = offset + KT_CENTRAL_DIR_SIZE + nameLen;
+                    uint64_t endExtra = extraOffset + extraLen;
 
-                    // Get local header offset
-                    uint64_t localOffset = isZip64 && compSize32 == 0xFFFFFFFF ? *reinterpret_cast<uint64_t *>(data + offset + 46 + nameLen + (extraLen >= 24 ? 20 : extraLen)) : *reinterpret_cast<uint32_t *>(data + offset + 42);
-
-                    // Update sizes for ZIP64
-                    if (isZip64 && compSize32 == 0xFFFFFFFF)
+                    while (extraOffset + 4 <= endExtra)
                     {
-                        for (uint16_t j = 0; j < extraLen;)
+                        uint16_t id, size;
+                        read16(data, fileSize, extraOffset, id);
+                        read16(data, fileSize, extraOffset + 2, size);
+
+                        if (extraOffset + 4 + size > endExtra)
+                            break;
+
+                        if (id == KT_ZIP64_EXTRA_ID)
                         {
-                            uint16_t id = *reinterpret_cast<uint16_t *>(data + offset + 46 + nameLen + j);
-                            uint16_t size = *reinterpret_cast<uint16_t *>(data + offset + 46 + nameLen + j + 2);
-                            if (id == KT_ZIP64_EXTRA_ID && size >= 16)
+                            uint64_t fieldOffset = extraOffset + 4;
+
+                            if (uncompSize32 == 0xFFFFFFFF)
                             {
-                                info.uncompressedSize = *reinterpret_cast<uint64_t *>(data + offset + 46 + nameLen + j + 4);
-                                info.compressedSize = *reinterpret_cast<uint64_t *>(data + offset + 46 + nameLen + j + 12);
-                                break;
+                                read64(data, fileSize, fieldOffset, info.uncompressedSize);
+                                fieldOffset += 8;
                             }
-                            j += 4 + size;
+
+                            if (compSize32 == 0xFFFFFFFF)
+                            {
+                                read64(data, fileSize, fieldOffset, info.compressedSize);
+                                fieldOffset += 8;
+                            }
+
+                            if (localHeaderOffset32 == 0xFFFFFFFF)
+                            {
+                                read64(data, fileSize, fieldOffset, localHeaderOffset);
+                            }
+
+                            break;
                         }
+
+                        extraOffset += 4 + size;
                     }
-
-                    // Calculate data offset
-                    uint16_t localNameLen = *reinterpret_cast<uint16_t *>(data + localOffset + 26);
-                    uint16_t localExtraLen = *reinterpret_cast<uint16_t *>(data + localOffset + 28);
-                    info.dataOffset = localOffset + 30 + localNameLen + localExtraLen;
-
-                    files.push_back(info);
                 }
 
-                offset += 46 + nameLen + extraLen + commentLen;
+                // Validate local header
+                if (localHeaderOffset + KT_LOCAL_HEADER_SIZE > fileSize)
+                    break;
+
+                uint16_t localNameLen, localExtraLen;
+                read16(data, fileSize, localHeaderOffset + 26, localNameLen);
+                read16(data, fileSize, localHeaderOffset + 28, localExtraLen);
+
+                info.dataOffset = localHeaderOffset + KT_LOCAL_HEADER_SIZE + localNameLen + localExtraLen;
+
+                if (info.dataOffset > fileSize)
+                    break;
+
+                ents.push_back(std::move(info));
+
+                offset += entrySize;
+                parsedEntries++;
+
+                if (parsedEntries >= totalEntries)
+                    break;
             }
 
             munmap(map, fileSize);
-            close(fd);
-            return files;
+            KT_EINTR_RETRY(close(fd));
+
+            return ents;
         }
 
-        ZipFileInfo GetFileInfoByDataOffset(const std::string &zipPath, uint64_t dataOffset)
+        bool findEntryInfoByDataOffset(const std::string &zipPath, uint64_t dataOffset, ZipEntryInfo *out)
         {
-            ZipFileInfo info{};
+            if (out)
+                *out = {};
 
-            const auto files = listFilesInZip(zipPath);
-            for (const auto &it : files)
+            const auto ents = listEntriesInZip(zipPath);
+            for (const auto &it : ents)
             {
                 if (it.dataOffset == dataOffset)
                 {
-                    info = it;
-                    break;
+                    if (out)
+                        *out = it;
+
+                    return true;
                 }
             }
 
-            return info;
+            return false;
         }
 
-        ZipFileMMap MMapFileByDataOffset(const std::string &zipPath, uint64_t dataOffset)
+        bool mmapEntryByDataOffset(const std::string &zipPath, uint64_t dataOffset, ZipEntryMMap *out)
         {
-            ZipFileMMap result;
+            if (out)
+                *out = {};
+
+            ZipEntryInfo ent{};
+            if (!findEntryInfoByDataOffset(zipPath, dataOffset, &ent))
+                return false;
+
+            uint64_t compressedSize = ent.compressedSize;
+
             int fd = KT_EINTR_RETRY(open(zipPath.c_str(), O_RDONLY));
             if (fd < 0)
+                return false;
+
+            struct stat st{};
+            if (fstat(fd, &st) < 0)
             {
-                KITTY_LOGD("open failed: %s, error: %s", zipPath.c_str(), strerror(errno));
-                return result;
+                KT_EINTR_RETRY(close(fd));
+                return false;
             }
 
-            // Get file info to obtain compressed size
-            ZipFileInfo info = GetFileInfoByDataOffset(zipPath, dataOffset);
-            if (info.fileName.empty())
+            uint64_t fileSize = st.st_size;
+
+            if (dataOffset >= fileSize || dataOffset + compressedSize > fileSize)
             {
-                KITTY_LOGD("No file found at offset %" PRIx64, dataOffset);
-                close(fd);
-                return result;
+                KT_EINTR_RETRY(close(fd));
+                return false;
             }
 
-            // mmap the data
-            result.size = info.compressedSize;
-            result.data = mmap(nullptr, result.size, PROT_READ, MAP_PRIVATE, fd, dataOffset);
-            if (result.data == MAP_FAILED)
+            const size_t pageSize = sysconf(_SC_PAGE_SIZE);
+            uint64_t alignedOffset = dataOffset & ~(uint64_t(pageSize - 1));
+            uint64_t offsetDiff = dataOffset - alignedOffset;
+            uint64_t mapSize = offsetDiff + compressedSize;
+
+            void *map = mmap(nullptr, mapSize, PROT_READ, MAP_PRIVATE, fd, alignedOffset);
+
+            KT_EINTR_RETRY(close(fd));
+
+            if (!map || map == MAP_FAILED)
+                return false;
+
+            if (out)
             {
-                KITTY_LOGD("mmap failed at offset %" PRIx64 ": %s", dataOffset, strerror(errno));
-                result.size = 0;
+                out->mappingBase = map;
+                out->mappingSize = mapSize;
+                out->data = static_cast<uint8_t *>(map) + offsetDiff;
+                out->size = compressedSize;
             }
 
-            close(fd);
-            return result;
+            return true;
         }
-    }  // namespace Zip
+    } // namespace Zip
 
-#endif  // __ANDROID__
+#endif // __ANDROID__
 
-}  // namespace KittyUtils
+} // namespace KittyUtils
