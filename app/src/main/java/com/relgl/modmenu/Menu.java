@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebView;
+import android.webkit.WebSettings;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -200,7 +201,7 @@ public class Menu {
                 "</html>", "text/html", "utf-8");
         wView.setBackgroundColor(0x00000000); //Transparent
         wView.setAlpha(ICON_ALPHA);
-        wView.getSettings().setDatabaseEnabled(true);
+        wView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         wView.setOnTouchListener(onTouchListener());
 
         //********** Sub Layout **********
@@ -1517,7 +1518,7 @@ public class Menu {
         wView.loadData(text, "text/html", "utf-8");
         wView.setBackgroundColor(0x00000000); //Transparent
         wView.setPadding(0, 5, 0, 5);
-        wView.getSettings().setDatabaseEnabled(false);
+        wView.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         linLayout.addView(wView);
     }
 
