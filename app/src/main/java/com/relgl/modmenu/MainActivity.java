@@ -1,15 +1,10 @@
 package com.relgl.modmenu;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.widget.LinearLayout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-import android.os.Handler;
 
 public class MainActivity extends Activity {
 
