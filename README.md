@@ -2,11 +2,15 @@
 > _THERE IS A FAKE NEW LGLTEAM IN GITHUB IS NOT CONNECTED WITH THE REAL LGLTEAM! THE REAL LGLTEAM HAS LEFT US, DUE TO SOME PERSONAL LIVE CHANGES. THIS PROJECT IS CONTINUING THE LEGACY OF LGLTEAM!_
 
 # Introduction
-![GitHub](https://img.shields.io/github/license/Parsa307/ReLGL-Android-Menu?style=flat-square)
+![GitHub](https://img.shields.io/github/license/ParsastTeam/ReLGL-Mod-Menu-OSS?style=flat-square)
+
+<a href="https://www.blacksmith.sh">
+  <img src="https://github.com/ParsastTeam/ReLGL-Mod-Menu-OSS/blob/main/blacksmith-powered.png" alt="CI powered by Blacksmith" width="280" />
+</a>
 
 Continuing the Legacy of LGLTeam!
 
-Open Issues if any bugs are found. Before opening any issues, check [Known issues](https://github.com/Parsa307/ReLGL-Android-Menu/issues/2)
+Open Issues if any bugs are found. Before opening any issues, check [Known issues](https://github.com/ParsastTeam/ReLGL-Mod-Menu-OSS/issues/2)
 
 [Background](https://safebooru.donmai.us/posts/10262256)
 
