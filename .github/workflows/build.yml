@@ -23,6 +23,14 @@ jobs:
           java-version: "25"
           cache: "gradle"
 
+      - name: Configure Gradle
+        run: |
+          mkdir -p ~/.gradle
+          echo 'org.gradle.caching=true' >> ~/.gradle/gradle.properties
+          echo 'org.gradle.parallel=true' >> ~/.gradle/gradle.properties
+          echo 'org.gradle.jvmargs=-Xmx56g -Dfile.encoding=UTF-8 -XX:+UseParallelGC' >> ~/.gradle/gradle.properties
+          echo 'android.native.buildOutput=verbose' >> ~/.gradle/gradle.properties
+
       - name: Configure Signing
         run: |
           echo "storeFile=${{ github.workspace }}/keystore.jks" >> local.properties
