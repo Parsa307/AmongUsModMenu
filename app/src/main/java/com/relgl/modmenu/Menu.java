@@ -730,12 +730,12 @@ public class Menu {
             GD_TRACK.setColor(LST_MAB);
 
             GD_THUMB.setStroke(2, Color.YELLOW);
-            GD_TRACK.setColor(LST_MAB);
+            GD_THUMB.setColor(LST_MAB);
         } else {
             GD_TRACK.setStroke(2, LST_MAB);
             GD_TRACK.setColor(Color.YELLOW);
 
-            GD_TRACK.setStroke(2, LST_MAB);
+            GD_THUMB.setStroke(2, LST_MAB);
             GD_THUMB.setColor(Color.YELLOW);
         }
         switchR.setText(featName);
